@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -o errexit
+
+trace () {
+    echo "Running:" $*
+    $*
+}
+
+for dir in $(find . -type d); do
+    [ "$dir" = "." ] && continue
+    target=~/.${dir#./}
+    [ -d $target ] && continue
+    trace mkdir -p $target
+done
+
+for file in $(find . -type f); do
+    [ "$file" = "$0" ] && continue
+    barename=${file#./}
+    target=~/.$barename
+
+    if [ -e $target ]; then
+	if [ ! "$file" -ef "$target" ]; then
+	    echo "Skipping local $target; delete if unintentionally local."
+	fi
+	continue
+    fi
+    trace ln $file $target
+done

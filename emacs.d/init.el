@@ -7,22 +7,30 @@
  backup-inhibited t
  ; disable auto save
  auto-save-default nil
- 
+
+ make-backup-files nil
+
+ ; don't do all this renaming/copying jiggery-pokery when saving a file.
+ file-precious-flag nil
+ ; don't break hard links when editing
+ backup-by-copying-when-linked nil
+
  indent-tabs-mode nil
  standard-indent 2
  c-basic-offset 2
  python-indent 1
+
+ show-trailing-whitespace t
 )
 
-; (global-set-key "\C-m" 'newline-and-indent)
-; (global-set-key "\C-j" 'newline)
-(global-set-key "\C-xc" 'compile)
+(add-to-list 'load-path "~/.emacs.d")
 
+; (global-set-key "\C-xc" 'compile)
+
+; Turn off the menu.
 (menu-bar-mode 0)
 
 ; Git support.
-(add-to-list 'load-path "~/.emacs.d")
-(require 'git-emacs)
 (require 'magit)
 
 (custom-set-variables
@@ -32,6 +40,7 @@
   ;; If there is more than one, they won't work right.
  '(column-number-mode t)
  '(scroll-bar-mode (quote right))
+ '(lj-default-username "evan")
  '(show-paren-mode t)
  '(tool-bar-mode nil))
 (custom-set-faces
@@ -51,7 +60,6 @@
 (setq mode-compile-always-save-buffer-p t)
 ;; make the compile window stick at 12 lines tall
 (setq compilation-window-height 12)
- 
 ;; If the compilation has a zero exit code, the windows disappears
 ;; after two seconds.
 (setq compilation-finish-function
@@ -62,4 +70,6 @@
            "2 sec" nil 'delete-windows-on
            (get-buffer-create "*compilation*"))
           (message "No Compilation Errors!"))))
- 
+
+; LiveJournal support.
+(require 'ljupdate)

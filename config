@@ -7,19 +7,24 @@ trace () {
     $*
 }
 
-for dir in $(find . -type d); do
-    [ "$dir" = "." ] && continue
-    target=~/.${dir#./}
-    [ -d $target ] && continue
-    trace mkdir -p $target
-done
-
-for file in $(find . -type f); do
+for file in $(find . -name .git -prune -o -print); do
     [ "$file" = "$0" ] && continue
-    barename=${file#./}
-    target=~/.$barename
+    [ "$file" = "." ] && continue
+
+    # target is in ~/ with an extra "." before.
+    # We also must strip the leading "./" find adds.
+    target=~/.${file#./}
+
+    # Skip any already-existing directories.
+    [ -d $target ] && continue
+    # Create any necessary directories.
+    if [ -d $file ]; then
+	trace mkdir -p $target
+	continue
+    fi
 
     if [ -e $target ]; then
+	# -ef tests whether they're sharing a hardlink.
 	if [ ! "$file" -ef "$target" ]; then
 	    echo "Skipping local $target; delete if unintentionally local."
 	fi

@@ -57,4 +57,6 @@ wgets() {
 }
 
 export LESS='FRiKX'
-alias e="emacs"
+
+source ~/.emacs.d/emacs.bash
+alias e="edit"

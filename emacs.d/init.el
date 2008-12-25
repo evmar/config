@@ -29,6 +29,8 @@
 
 (add-to-list 'load-path "~/.emacs.d")
 
+(server-start)
+
 (require 'project-local-variables)
 
 ; Don't require me to type out "yes".

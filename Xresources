@@ -1,0 +1,21 @@
+Emacs.menuBar: off
+Emacs.verticalScrollBars: off
+Emacs.toolBar: off
+Emacs.font: Bitstream Vera Sans Mono-9
+
+URxvt.font: xft:Bitstream Vera Sans Mono:pixelsize=14
+URxvt.background: white
+// Fade when focus lost.
+URxvt.fading: 4
+// Flash on bell.
+URxvt.urgentOnBell: true
+URxvt.visualBell: true
+
+URxvt.scrollstyle: plain
+URxvt.scrollBar_right: true
+// 10k of scrollback
+URxvt.saveLines: 10000
+
+URxvt.scrollTtyOutput: False
+URxvt.scrollWithBuffer: False
+URxvt.scrollTtyKeypress: True

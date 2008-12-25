@@ -1,8 +1,6 @@
 (setq-default
  ; don't show startup screen
  inhibit-startup-screen t
- ; no toolbar
- tool-bar-mode nil
  ; disable backup
  backup-inhibited t
  ; disable auto save
@@ -37,9 +35,6 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 
 (global-set-key "\C-cc" 'compile)
-
-; Turn off the menu.
-(menu-bar-mode 0)
 
 ; Git support.
 (require 'magit)

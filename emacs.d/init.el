@@ -1,4 +1,4 @@
-(setq
+(setq-default
  ; don't show startup screen
  inhibit-startup-screen t
  ; no toolbar
@@ -18,14 +18,19 @@
  indent-tabs-mode nil
  standard-indent 2
  c-basic-offset 2
- python-indent 1
+ python-indent 4
 
  show-trailing-whitespace t
 )
 
 (add-to-list 'load-path "~/.emacs.d")
 
-; (global-set-key "\C-xc" 'compile)
+(require 'project-local-variables)
+
+; Don't require me to type out "yes".
+(fset 'yes-or-no-p 'y-or-n-p)
+
+(global-set-key "\C-cc" 'compile)
 
 ; Turn off the menu.
 (menu-bar-mode 0)
@@ -52,6 +57,7 @@
 
 ; Haskell ghci support.
 (add-hook 'haskell-mode-hook 'turn-on-haskell-ghci)
+(add-hook 'haskell-mode-hook 'turn-on-haskell-simple-indent)
 (setq completion-ignored-extensions
       (cons ".hi" completion-ignored-extensions))
 
@@ -73,3 +79,15 @@
 
 ; LiveJournal support.
 (require 'ljupdate)
+
+; Timestamp function.
+(defun timestamp ()
+  "Insert a time stamp into the buffer."
+  (interactive)
+  (insert (format-time-string "%Y/%m/%d %H:%M" (current-time))))
+
+; Markdown
+(autoload 'markdown-mode "markdown-mode.el"
+   "Major mode for editing Markdown files" t)
+(setq auto-mode-alist
+   (cons '("\\.text" . markdown-mode) auto-mode-alist))

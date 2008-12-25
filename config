@@ -7,28 +7,19 @@ trace () {
     $*
 }
 
-for file in $(find . -name .git -prune -o -print); do
-    [ "$file" = "$0" ] && continue
+pwd=$(pwd)
+for file in *; do
+    [ "$file" = "config" ] && continue
     [ "$file" = "." ] && continue
 
-    # target is in ~/ with an extra "." before.
-    # We also must strip the leading "./" find adds.
-    target=~/.${file#./}
-
-    # Skip any already-existing directories.
-    [ -d $target ] && continue
-    # Create any necessary directories.
-    if [ -d $file ]; then
-	trace mkdir -p $target
-	continue
-    fi
+    target=~/.$file
 
     if [ -e $target ]; then
-	# -ef tests whether they're sharing a hardlink.
-	if [ ! "$file" -ef "$target" ]; then
-	    echo "Skipping local $target; delete if unintentionally local."
-	fi
-	continue
+        link=$(readlink $target || echo)
+        if [ "${link%/}" != $pwd/$file ]; then
+            echo "Skipping $target -- remove it if it should be managed by config."
+        fi
+        continue
     fi
-    trace ln $file $target
+    trace ln -s $pwd/$file $target
 done

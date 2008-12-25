@@ -21,6 +21,10 @@
  python-indent 4
 
  show-trailing-whitespace t
+ require-final-newline t  ; will this break stuff?
+
+ ; middle-click should paste at the point, not where I clicked.
+ mouse-yank-at-point t
 )
 
 (add-to-list 'load-path "~/.emacs.d")

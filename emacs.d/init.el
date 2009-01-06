@@ -37,7 +37,8 @@
 (global-set-key "\C-cc" 'compile)
 
 ; Git support.
-(require 'magit)
+(autoload 'magit-status "magit" nil t)
+(global-set-key "\C-c\C-z" 'magit-status)
 
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
@@ -92,3 +93,8 @@
    "Major mode for editing Markdown files" t)
 (setq auto-mode-alist
    (cons '("\\.text" . markdown-mode) auto-mode-alist))
+
+; Javascript
+(autoload 'js2-mode "js2" nil t)
+(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+(add-to-list 'auto-mode-alist '("\\.json$" . js2-mode))

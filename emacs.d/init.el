@@ -27,24 +27,26 @@
 
 (add-to-list 'load-path "~/.emacs.d")
 
+; start emacs server
 (server-start)
+
+; interactive buffer switch
+(iswitchb-mode)
 
 (require 'project-local-variables)
 
 ; Don't require me to type out "yes".
 (fset 'yes-or-no-p 'y-or-n-p)
 
-(global-set-key "\C-cc" 'compile)
-
 ; Git support.
 (autoload 'magit-status "magit" nil t)
-(global-set-key "\C-c\C-z" 'magit-status)
 
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
+ '(uniquify-buffer-name-style 'forward)
  '(column-number-mode t)
  '(scroll-bar-mode (quote right))
  '(lj-default-username "evan")
@@ -59,9 +61,10 @@
 
 ; Haskell ghci support.
 (add-hook 'haskell-mode-hook 'turn-on-haskell-ghci)
-(add-hook 'haskell-mode-hook 'turn-on-haskell-simple-indent)
 (setq completion-ignored-extensions
       (cons ".hi" completion-ignored-extensions))
+(add-to-list 'auto-mode-alist '("\\.cpphs$" . haskell-mode))
+(add-to-list 'auto-mode-alist '("\\.chs$" . haskell-mode))
 
 ;; this means hitting the compile button always saves the buffer
 ;; having to separately hit C-x C-s is a waste of time
@@ -88,6 +91,12 @@
   (interactive)
   (insert (format-time-string "%Y/%m/%d %H:%M" (current-time))))
 
+(defun new-post ()
+  "Set up a post for lazyblog."
+  (interactive)
+  (insert "Timestamp: ") (timestamp) (insert "\n")
+  (insert "Subject: "))
+
 ; Markdown
 (autoload 'markdown-mode "markdown-mode.el"
    "Major mode for editing Markdown files" t)
@@ -98,3 +107,34 @@
 (autoload 'js2-mode "js2" nil t)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.json$" . js2-mode))
+
+; vi-like keybindings
+
+(defvar newline-and-indent nil
+  "Modify the behavior of the open-*-line functions to cause them
+to autoindent.")
+
+(defun open-previous-line (arg)
+  "Open a new line before the current one.
+
+See also `newline-and-indent'."
+  (interactive "p")
+  (beginning-of-line)
+  (open-line arg)
+  (when newline-and-indent
+    (indent-according-to-mode)))
+
+(defun open-next-line (arg)
+  "Move to the next line and then opens a line.
+
+See also `newline-and-indent'."
+  (interactive "p")
+  (end-of-line)
+  (open-line arg)
+  (forward-line 1)
+  (when newline-and-indent
+    (indent-according-to-mode)))
+
+(global-set-key (kbd "C-o") 'open-next-line)
+(global-set-key (kbd "M-o") 'open-previous-line)
+

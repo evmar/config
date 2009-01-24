@@ -108,6 +108,8 @@
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.json$" . js2-mode))
 
+; SCons
+(add-to-list 'auto-mode-alist '("\\.scons$" . python-mode))
 ; vi-like keybindings
 
 (defvar newline-and-indent nil

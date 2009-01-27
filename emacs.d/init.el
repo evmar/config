@@ -33,8 +33,6 @@
 ; interactive buffer switch
 (iswitchb-mode)
 
-(require 'project-local-variables)
-
 ; Don't require me to type out "yes".
 (fset 'yes-or-no-p 'y-or-n-p)
 
@@ -71,6 +69,8 @@
 (setq mode-compile-always-save-buffer-p t)
 ;; make the compile window stick at 12 lines tall
 (setq compilation-window-height 12)
+;; always scroll
+(setq compilation-scroll-output t)
 ;; If the compilation has a zero exit code, the windows disappears
 ;; after two seconds.
 (setq compilation-finish-function
@@ -96,6 +96,10 @@
   (interactive)
   (insert "Timestamp: ") (timestamp) (insert "\n")
   (insert "Subject: "))
+
+; Chromium!
+(require 'chromium)
+(add-hook 'find-file-hook 'chromium-setup-compile)
 
 ; Markdown
 (autoload 'markdown-mode "markdown-mode.el"
@@ -140,3 +144,4 @@ See also `newline-and-indent'."
 (global-set-key (kbd "C-o") 'open-next-line)
 (global-set-key (kbd "M-o") 'open-previous-line)
 
+(global-set-key [f7] 'recompile)

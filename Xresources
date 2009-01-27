@@ -2,6 +2,7 @@ Emacs.menuBar: off
 Emacs.verticalScrollBars: off
 Emacs.toolBar: off
 Emacs.font: Bitstream Vera Sans Mono-9
+Emacs.fontBackend: xft
 
 URxvt.font: xft:Bitstream Vera Sans Mono:pixelsize=14
 URxvt.background: white

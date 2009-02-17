@@ -25,6 +25,8 @@
  mouse-yank-at-point t
 )
 
+(menu-bar-mode -1)
+
 (add-to-list 'load-path "~/.emacs.d")
 
 ; start emacs server

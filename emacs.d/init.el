@@ -43,7 +43,7 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 
 ; Git support.
-(autoload 'magit-status "magit" nil t)
+; (autoload 'magit-status "magit" nil t)
 
 (custom-set-variables
   ;; custom-set-variables was added by Custom.

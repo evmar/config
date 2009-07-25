@@ -61,7 +61,7 @@
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
- )
+ '(whitespace-line ((t (:underline t)))))
 
 ; Haskell ghci support.
 (add-hook 'haskell-mode-hook 'turn-on-haskell-ghci)
@@ -151,3 +151,7 @@ See also `newline-and-indent'."
 (global-set-key (kbd "M-o") 'open-previous-line)
 
 (global-set-key [f7] 'recompile)
+
+(require 'whitespace)
+(setq whitespace-style '(trailing tabs lines-tail))
+(global-whitespace-mode)

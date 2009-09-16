@@ -43,7 +43,7 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 
 ; Git support.
-; (autoload 'magit-status "magit" nil t)
+(autoload 'magit-status "magit" nil t)
 
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
@@ -152,6 +152,11 @@ See also `newline-and-indent'."
 
 (global-set-key [f7] 'recompile)
 
+; Only use whitespace mode for overlong lines; its end-of-line whitespace
+; detection is annoying.
 (require 'whitespace)
-(setq whitespace-style '(trailing tabs lines-tail))
+(setq whitespace-style '(lines-tail))
 (global-whitespace-mode)
+
+(setq browse-url-browser-function 'browse-url-generic
+      browse-url-generic-program "google-chrome")

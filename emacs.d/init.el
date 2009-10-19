@@ -55,7 +55,8 @@
  '(org-agenda-files (quote ("~/everything.org")))
  '(show-paren-mode t)
  '(tool-bar-mode nil)
- '(uniquify-buffer-name-style (quote forward)))
+ '(uniquify-buffer-name-style (quote forward))
+ '(haskell-program-name "ghci"))
 (custom-set-faces
   ;; custom-set-faces was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.
@@ -64,7 +65,9 @@
  '(whitespace-line ((t (:underline t)))))
 
 ; Haskell ghci support.
-(add-hook 'haskell-mode-hook 'turn-on-haskell-ghci)
+(require 'inf-haskell)
+(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+(add-hook 'haskell-mode-hook 'turn-on-haskell-simple-indent)
 (setq completion-ignored-extensions
       (cons ".hi" completion-ignored-extensions))
 (add-to-list 'auto-mode-alist '("\\.cpphs$" . haskell-mode))

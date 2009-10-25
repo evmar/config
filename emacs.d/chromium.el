@@ -21,8 +21,7 @@ Meant to be added to `find-file-hook'."
   (let ((chrome-root (upward-find-file "WEBKIT_MERGE_REVISION")))
     (when chrome-root
       (set (make-local-variable 'compile-command)
-           (concat "cd " chrome-root "/chrome; "
-                   "../third_party/scons/scons.py "
-                   "--site-dir=../site_scons --implicit-cache ")))))
+           (concat "cd " chrome-root "; "
+                   "../b.sh chrome")))))
 
 (provide 'chromium)

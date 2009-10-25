@@ -23,6 +23,9 @@
 
  ; middle-click should paste at the point, not where I clicked.
  mouse-yank-at-point t
+
+ ; death to fsync (really to ext3 with mode=ordered)
+ write-region-inhibit-fsync t
 )
 
 ; no menu bar on console mode
@@ -36,14 +39,16 @@
 ; start emacs server
 (server-start)
 
-; interactive buffer switch
-(iswitchb-mode)
+; interactive buffer switch and file load
+(require 'ido)
+(ido-mode t)
 
 ; Don't require me to type out "yes".
 (fset 'yes-or-no-p 'y-or-n-p)
 
 ; Git support.
 (autoload 'magit-status "magit" nil t)
+(require 'vc-git-grep)
 
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
@@ -79,7 +84,7 @@
 (setq compilation-scroll-output t)
 ;; If the compilation has a zero exit code, the windows disappears
 ;; after two seconds.
-(setq compilation-finish-function
+(setq compilation-finish-functions
       (lambda (buf str)
         (unless (string-match "exited abnormally" str)
           ;; No errors, make the compilation window go away in a few seconds.
@@ -151,3 +156,11 @@ See also `newline-and-indent'."
 (global-set-key (kbd "M-o") 'open-previous-line)
 
 (global-set-key [f7] 'recompile)
+
+(defun autocompile nil
+  "compile itself if ~/.emacs/init.el"
+  (interactive)
+  (require 'bytecomp)
+  (if (string= (buffer-file-name) (expand-file-name "~/.emacs.d/init.el"))
+      (byte-compile-file (buffer-file-name))))
+(add-hook 'after-save-hook 'autocompile)

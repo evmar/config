@@ -1,0 +1,7 @@
+[user]
+	name = Evan Martin
+	email = martine@danga.com
+[color]
+  diff = auto
+  status = auto
+  branch = auto

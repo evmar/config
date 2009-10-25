@@ -60,16 +60,19 @@
  '(org-agenda-files (quote ("~/everything.org")))
  '(show-paren-mode t)
  '(tool-bar-mode nil)
- '(uniquify-buffer-name-style (quote forward)))
+ '(uniquify-buffer-name-style (quote forward))
+ '(haskell-program-name "ghci"))
 (custom-set-faces
   ;; custom-set-faces was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
- )
+ '(whitespace-line ((t (:underline t)))))
 
 ; Haskell ghci support.
-(add-hook 'haskell-mode-hook 'turn-on-haskell-ghci)
+(require 'inf-haskell)
+(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+(add-hook 'haskell-mode-hook 'turn-on-haskell-simple-indent)
 (setq completion-ignored-extensions
       (cons ".hi" completion-ignored-extensions))
 (add-to-list 'auto-mode-alist '("\\.cpphs$" . haskell-mode))
@@ -164,3 +167,16 @@ See also `newline-and-indent'."
   (if (string= (buffer-file-name) (expand-file-name "~/.emacs.d/init.el"))
       (byte-compile-file (buffer-file-name))))
 (add-hook 'after-save-hook 'autocompile)
+
+; Only use whitespace mode for overlong lines; its end-of-line whitespace
+; detection is annoying.
+(require 'whitespace)
+(setq whitespace-style '(lines-tail))
+(global-whitespace-mode)
+
+(setq browse-url-browser-function 'browse-url-generic
+      browse-url-generic-program "google-chrome")
+
+(setq viper-mode t)                ; enable Viper at load time
+(setq viper-ex-style-editing nil)  ; can backspace past start of insert / line
+(require 'viper)                   ; load Viper

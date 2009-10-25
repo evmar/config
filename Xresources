@@ -4,7 +4,7 @@ Emacs.toolBar: off
 Emacs.font: Monospace-9
 Emacs.fontBackend: xft
 
-URxvt.font: xft:Bitstream Vera Sans Mono:pixelsize=14
+URxvt.font: xft:Monospace:pixelsize=13
 URxvt.background: white
 // Fade when focus lost.
 URxvt.fading: 4

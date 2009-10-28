@@ -159,4 +159,4 @@ This command shares argument histories with \\[rgrep] and \\[grep]."
 	(if (eq next-error-last-buffer (current-buffer))
 	    (setq default-directory dir))))))
 
-(provide 'vc-git-grep)
+(provide 'git-grep)

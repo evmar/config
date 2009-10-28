@@ -48,7 +48,7 @@
 
 ; Git support.
 (autoload 'magit-status "magit" nil t)
-(require 'vc-git-grep)
+(require 'git-grep)
 
 (custom-set-variables
   ;; custom-set-variables was added by Custom.

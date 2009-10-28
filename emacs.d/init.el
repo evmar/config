@@ -180,5 +180,4 @@ See also `newline-and-indent'."
       browse-url-generic-program "google-chrome")
 
 (setq viper-mode t)                ; enable Viper at load time
-(setq viper-ex-style-editing nil)  ; can backspace past start of insert / line
 (require 'viper)                   ; load Viper

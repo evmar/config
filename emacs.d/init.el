@@ -164,7 +164,9 @@ See also `newline-and-indent'."
   "compile itself if ~/.emacs/init.el"
   (interactive)
   (require 'bytecomp)
-  (if (string= (buffer-file-name) (expand-file-name "~/.emacs.d/init.el"))
+  (print (buffer-file-name))
+  (if (or (string= (buffer-file-name) (expand-file-name "~/.emacs.d/init.el"))
+          (string= (buffer-file-name) (expand-file-name "~/projects/config/emacs.d/init.el")))
       (byte-compile-file (buffer-file-name))))
 (add-hook 'after-save-hook 'autocompile)
 

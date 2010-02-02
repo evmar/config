@@ -181,5 +181,5 @@ See also `newline-and-indent'."
 (setq browse-url-browser-function 'browse-url-generic
       browse-url-generic-program "google-chrome")
 
-(setq viper-mode t)                ; enable Viper at load time
-(require 'viper)                   ; load Viper
+;(setq viper-mode t)                ; enable Viper at load time
+;(require 'viper)                   ; load Viper

@@ -1,7 +1,5 @@
 [user]
-	name = Evan Martin
-	email = martine@danga.com
+  name = Evan Martin
+  email = martine@danga.com
 [color]
-  diff = auto
-  status = auto
-  branch = auto
+  ui = auto

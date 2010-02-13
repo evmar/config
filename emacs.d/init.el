@@ -109,7 +109,6 @@
 
 ; Chromium!
 (require 'chromium)
-(add-hook 'find-file-hook 'chromium-setup-compile)
 
 ; Markdown
 (autoload 'markdown-mode "markdown-mode.el"

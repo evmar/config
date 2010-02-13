@@ -8,20 +8,28 @@ return the directory or nil."
     (cond ((file-exists-p (expand-file-name filename dir)) dir)
           ((string= dir "/") nil)
           (t (let ((parent (directory-file-name (file-name-directory dir))))
-           (upward-find-file filename parent))))))
+               (upward-find-file filename parent))))))
 
 (defun chromium-setup-compile ()
-  "Set up compile to build chromium's scons appropriately.
-Meant to be added to `find-file-hook'."
-  (interactive)
+  "Set up `compile' to default to Chromium's make command."
+  (set (make-local-variable 'compile-command)
+       (concat "cd " chromium-root "; "
+               "make -r -j5 chrome")))
 
-  (add-hook 'c-mode-common-hook 'google-set-c-style)
+(defun chromium-maybe-setup ()
+  "Test if we're in the Chrome tree and set up environment for
+hacking on Chromium if so.
+Meant to be added to `find-file-hook'."
 
   ;; We find the source root by looking for a crazy filename.
-  (let ((chrome-root (upward-find-file "WEBKIT_MERGE_REVISION")))
-    (when chrome-root
-      (set (make-local-variable 'compile-command)
-           (concat "cd " chrome-root "; "
-                   "../b.sh chrome")))))
+  (set (make-local-variable 'chromium-root)
+       (upward-find-file "chrome/chrome.gyp"))
+
+  (when chromium-root
+    (message "In Chromium dir %s; setting variables accordingly." chromium-root)
+    (chromium-setup-compile)
+    (add-hook 'c-mode-common-hook 'google-set-c-style)))
+
+(add-hook 'find-file-hook 'chromium-maybe-setup)
 
 (provide 'chromium)

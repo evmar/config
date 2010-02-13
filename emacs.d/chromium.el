@@ -26,8 +26,9 @@ Meant to be added to `find-file-hook'."
        (upward-find-file "chrome/chrome.gyp"))
 
   (when chromium-root
-    (message "In Chromium dir %s; setting variables accordingly." chromium-root)
+    ;(message "In Chromium dir %s; setting variables." chromium-root)
     (chromium-setup-compile)
+    (add-to-list 'auto-mode-alist '("\\.gypi?$" . python-mode))
     (add-hook 'c-mode-common-hook 'google-set-c-style)))
 
 (add-hook 'find-file-hook 'chromium-maybe-setup)

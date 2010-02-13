@@ -159,6 +159,7 @@ See also `newline-and-indent'."
 (global-set-key (kbd "M-o") 'open-previous-line)
 
 (global-set-key [f7] 'recompile)
+(global-set-key (kbd "M-`") 'next-error)
 
 (defun autocompile nil
   "compile itself if ~/.emacs/init.el"

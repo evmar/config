@@ -7,11 +7,8 @@ trace () {
     $*
 }
 
-pwd=$(pwd)
-for file in *; do
-    [ "$file" = "config" ] && continue
-    [ "$file" = "." ] && continue
-
+link() {
+    file=$1
     target=~/.$file
 
     if [ -e $target ]; then
@@ -22,4 +19,20 @@ for file in *; do
         continue
     fi
     trace ln -s $pwd/$file $target
+}
+
+pwd=$(pwd)
+for file in *; do
+    [ "$file" = "config" ] && continue
+    [ "$file" = "local" ] && continue
+    [ "$file" = "." ] && continue
+
+    link $file
+done
+
+for dir in $(find local -type d); do
+    mkdir -p ~/.$dir
+done
+for file in $(find local -type f); do
+    link $file
 done

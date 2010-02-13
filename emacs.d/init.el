@@ -56,7 +56,6 @@
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
  '(column-number-mode t)
- '(lj-default-username "evan")
  '(org-agenda-files (quote ("~/everything.org")))
  '(show-paren-mode t)
  '(tool-bar-mode nil)
@@ -95,9 +94,6 @@
            "2 sec" nil 'delete-windows-on
            (get-buffer-create "*compilation*"))
           (message "No Compilation Errors!"))))
-
-; LiveJournal support.
-(require 'ljupdate)
 
 ; Timestamp function.
 (defun timestamp ()
@@ -179,6 +175,3 @@ See also `newline-and-indent'."
 
 (setq browse-url-browser-function 'browse-url-generic
       browse-url-generic-program "google-chrome")
-
-(setq viper-mode t)                ; enable Viper at load time
-(require 'viper)                   ; load Viper

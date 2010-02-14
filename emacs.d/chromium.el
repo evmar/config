@@ -1,6 +1,14 @@
 ;; Get this module from http://code.google.com/p/google-styleguide/ .
 (require 'google-c-style)
 
+(defgroup chromium nil
+  "Emacs settings for developing Chromium."
+  :group 'programming)
+(defcustom chromium-build-command "make -r -j3 chrome"
+  "Initial build command used by `compile'."
+  :type 'string
+  :group 'chromium)
+
 (defun upward-find-file (filename &optional dir)
   "Look for filename in the current directory or its parents;
 return the directory or nil."
@@ -14,7 +22,7 @@ return the directory or nil."
   "Set up `compile' to default to Chromium's make command."
   (set (make-local-variable 'compile-command)
        (concat "cd " chromium-root "; "
-               "make -r -j5 chrome")))
+               chromium-build-command)))
 
 (defun chromium-maybe-setup ()
   "Test if we're in the Chrome tree and set up environment for

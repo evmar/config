@@ -1,6 +1,3 @@
-;; Get this module from http://code.google.com/p/google-styleguide/ .
-(require 'google-c-style)
-
 (defgroup chromium nil
   "Emacs settings for developing Chromium."
   :group 'programming)
@@ -24,6 +21,11 @@ return the directory or nil."
        (concat "cd " chromium-root "; "
                chromium-build-command)))
 
+(defun chromium-setup-style ()
+  ;; Get this module from http://code.google.com/p/google-styleguide/ .
+  (require 'google-c-style)
+  (add-hook 'c-mode-common-hook 'google-set-c-style))
+
 (defun chromium-maybe-setup ()
   "Test if we're in the Chrome tree and set up environment for
 hacking on Chromium if so.
@@ -38,7 +40,7 @@ Meant to be added to `find-file-hook'."
 
       ;; (message "In Chromium dir %s; setting variables." chromium-root)
       (chromium-setup-compile)
-      (add-hook 'c-mode-common-hook 'google-set-c-style))))
+      (chromium-setup-style))))
 
 (add-hook 'find-file-hook 'chromium-maybe-setup)
 

@@ -15,6 +15,14 @@ return the directory or nil."
           (t (let ((parent (directory-file-name (file-name-directory dir))))
                (upward-find-file filename parent))))))
 
+(defun chromium-lint ()
+  "Run Chromium's cpplint.py on the current buffer."
+  (interactive)
+  (let ((lint-command (concat "cd " chromium-root "; "
+                              "python ../depot_tools/cpplint.py " buffer-file-name))
+        (lint-buffer-function (lambda (mode) "*lint*")))
+    (compilation-start lint-command nil lint-buffer-function)))
+
 (defun chromium-setup-compile ()
   "Set up `compile' to default to Chromium's make command."
   (set (make-local-variable 'compile-command)

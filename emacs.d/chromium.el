@@ -22,15 +22,19 @@ hacking on Chromium if so.
 Meant to be added to `find-file-hook'."
 
   ;; We find the source root by looking for a crazy filename.
-  (set (make-local-variable 'chromium-root)
-       (upward-find-file "chrome/chrome.gyp"))
+  (let ((root (upward-find-file "chrome/chrome.gyp")))
+    (when root
+      (defvar chromium-root root
+        "*Path to root of containing Chromium tree.")
+      (make-variable-buffer-local 'chromium-root)
 
-  (when chromium-root
-    ;(message "In Chromium dir %s; setting variables." chromium-root)
-    (chromium-setup-compile)
-    (add-to-list 'auto-mode-alist '("\\.gypi?$" . python-mode))
-    (add-hook 'c-mode-common-hook 'google-set-c-style)))
+      ;; (message "In Chromium dir %s; setting variables." chromium-root)
+      (chromium-setup-compile)
+      (add-hook 'c-mode-common-hook 'google-set-c-style))))
 
 (add-hook 'find-file-hook 'chromium-maybe-setup)
+
+;; Use python-mode for gyp files.
+(add-to-list 'auto-mode-alist '("\\.gypi?$" . python-mode))
 
 (provide 'chromium)

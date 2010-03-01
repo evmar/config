@@ -57,6 +57,10 @@
   ;; If there is more than one, they won't work right.
  '(column-number-mode t)
  '(haskell-program-name "ghci")
+ '(js2-auto-indent-flag nil)
+ '(js2-electric-keys (quote nil))
+ '(js2-mirror-mode nil)
+ '(js2-mode-escape-quotes nil)
  '(markdown-command "pandoc -f markdown")
  '(org-agenda-files (quote ("~/everything.org")))
  '(show-paren-mode t)

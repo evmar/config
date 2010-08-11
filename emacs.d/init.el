@@ -63,6 +63,7 @@
  '(js2-mode-escape-quotes nil)
  '(markdown-command "pandoc -f markdown")
  '(org-agenda-files (quote ("~/everything.org")))
+ '(safe-local-variable-values (quote ((c-offsets-alist (innamespace . 0)))))
  '(show-paren-mode t)
  '(tool-bar-mode nil)
  '(uniquify-buffer-name-style (quote forward)))

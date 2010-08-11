@@ -1,7 +1,7 @@
 (defgroup chromium nil
   "Emacs settings for developing Chromium."
   :group 'programming)
-(defcustom chromium-build-command "make -r -j3 chrome"
+(defcustom chromium-build-command "nice make -r -j20 chrome"
   "Initial build command used by `compile'."
   :type 'string
   :group 'chromium)

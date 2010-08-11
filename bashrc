@@ -8,9 +8,8 @@
 stty stop undef
 
 # don't put duplicate lines in the history. See bash(1) for more options
-export HISTCONTROL=ignoredups
-# ... and ignore same sucessive entries.
-export HISTCONTROL=ignoreboth
+# ... or force ignoredups and ignorespace
+HISTCONTROL=ignoredups:ignorespace
 
 # append to the history file, don't overwrite it
 shopt -s histappend
@@ -64,4 +63,4 @@ fi
 export LESS='FRiKX'
 
 source ~/.emacs.d/emacs.bash
-alias e="emacs"
+alias e="emacsclient -a '' -c -n"

@@ -5,3 +5,7 @@
   ui = auto
 [push]
   default = matching
+[alias]
+  b = branch
+  d = diff
+  co = checkout

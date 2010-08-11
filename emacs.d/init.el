@@ -26,6 +26,9 @@
 
  ; death to fsync (really to ext3 with mode=ordered)
  write-region-inhibit-fsync t
+
+ ; use normal monospace font
+ font-use-system-font t
 )
 
 ; no menu bar on console mode
@@ -48,7 +51,7 @@
 
 ; Git support.
 (autoload 'magit-status "magit" nil t)
-(require 'git-grep)
+;(require 'git-grep)
 
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
@@ -75,7 +78,7 @@
  '(whitespace-line ((t (:underline t)))))
 
 ; Haskell ghci support.
-(require 'inf-haskell)
+;(require 'inf-haskell)
 (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
 (add-hook 'haskell-mode-hook 'turn-on-haskell-simple-indent)
 (setq completion-ignored-extensions
@@ -188,3 +191,19 @@ See also `newline-and-indent'."
 (add-to-list 'auto-mode-alist '("\\.vapi$" . vala-mode))
 (add-to-list 'file-coding-system-alist '("\\.vala$" . utf-8))
 (add-to-list 'file-coding-system-alist '("\\.vapi$" . utf-8))
+
+(defconst grepsource-filetypes
+  '("*.h" "*.hpp" "*.cpp" "*.c" "*.cc" "*.cpp" "*.inl" "*.grd" "*.idl" "*.m"
+    "*.mm" "*.py" "*.sh" "*.cfg" "*SConscript" "SConscript*" "*.scons"
+    "*.vcproj" "*.vsprops" "*.make" "*.gyp" "*.gypi")
+  "A list of filetype patterns that grepsource will use.")
+
+(defun grepsource (cmd-args)
+  "Grep `default-directory' using git-grep for speed if we're in
+a git repository and falling back to a big \"find | xargs grep\"
+command if we aren't."
+  (interactive (list (read-from-minibuffer "Grep project for string: ")))
+  (let ((quoted (replace-regexp-in-string "\"" "\\\\\"" cmd-args))
+        (grep-use-null-device nil))
+    (grep (concat "git --no-pager grep -n -e \"" quoted "\" -- "
+                  (mapconcat 'identity grepsource-filetypes " ") " | cat"))))

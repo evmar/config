@@ -7034,90 +7034,90 @@ For instance, following a 'this' reference requires a parent function node."
 ;; a nested sub-alist element looks like (INDEX-NAME SUB-ALIST).
 ;; The sub-alist entries immediately follow INDEX-NAME, the head of the list.
 
-(defsubst js2-treeify (lst)
-  "Convert (a b c d) to (a ((b ((c d)))))"
-  (if (null (cddr lst))  ; list length <= 2
-      lst
-    (list (car lst) (list (js2-treeify (cdr lst))))))
+;; (defsubst js2-treeify (lst)
+;;   "Convert (a b c d) to (a ((b ((c d)))))"
+;;   (if (null (cddr lst))  ; list length <= 2
+;;       lst
+;;     (list (car lst) (list (js2-treeify (cdr lst))))))
 
-(defun js2-build-alist-trie (chains trie)
-  "Merge declaration name chains into a trie-like alist structure for imenu.
-CHAINS is the qname chain list produced during parsing. TRIE is a
-list of elements built up so far."
-  (let (head tail pos branch kids)
-    (dolist (chain chains)
-      (setq head (car chain)
-            tail (cdr chain)
-            pos (if (numberp (car tail)) (car tail))
-            branch (js2-find-if (lambda (n)
-                                  (string= (car n) head))
-                                trie)
-            kids (second branch))
-      (cond
-       ;; case 1:  this key isn't in the trie yet
-       ((null branch)
-        (if trie
-            (setcdr (last trie) (list (js2-treeify chain)))
-          (setq trie (list (js2-treeify chain)))))
+;; (defun js2-build-alist-trie (chains trie)
+;;   "Merge declaration name chains into a trie-like alist structure for imenu.
+;; CHAINS is the qname chain list produced during parsing. TRIE is a
+;; list of elements built up so far."
+;;   (let (head tail pos branch kids)
+;;     (dolist (chain chains)
+;;       (setq head (car chain)
+;;             tail (cdr chain)
+;;             pos (if (numberp (car tail)) (car tail))
+;;             branch (js2-find-if (lambda (n)
+;;                                   (string= (car n) head))
+;;                                 trie)
+;;             kids (second branch))
+;;       (cond
+;;        ;; case 1:  this key isn't in the trie yet
+;;        ((null branch)
+;;         (if trie
+;;             (setcdr (last trie) (list (js2-treeify chain)))
+;;           (setq trie (list (js2-treeify chain)))))
 
-       ;; case 2:  key is present with a single number entry:  replace w/ list
-       ;;  ("a1" 10)  +  ("a1" 20) => ("a1" (("<definition>" 10)
-       ;;                                    ("<definition>" 20)))
-       ((numberp kids)
-        (setcar (cdr branch)
-                (list (list "<definition-1>" kids)
-                      (if pos
-                          (list "<definition-2>" pos)
-                        (js2-treeify tail)))))
+;;        ;; case 2:  key is present with a single number entry:  replace w/ list
+;;        ;;  ("a1" 10)  +  ("a1" 20) => ("a1" (("<definition>" 10)
+;;        ;;                                    ("<definition>" 20)))
+;;        ((numberp kids)
+;;         (setcar (cdr branch)
+;;                 (list (list "<definition-1>" kids)
+;;                       (if pos
+;;                           (list "<definition-2>" pos)
+;;                         (js2-treeify tail)))))
 
-       ;; case 3:  key is there (with kids), and we're a number entry
-       (pos
-        (setcdr (last kids)
-                (list
-                 (list (format "<definition-%d>"
-                               (1+ (loop for kid in kids
-                                         count (eq ?< (aref (car kid) 0)))))
-                       pos))))
+;;        ;; case 3:  key is there (with kids), and we're a number entry
+;;        (pos
+;;         (setcdr (last kids)
+;;                 (list
+;;                  (list (format "<definition-%d>"
+;;                                (1+ (loop for kid in kids
+;;                                          count (eq ?< (aref (car kid) 0)))))
+;;                        pos))))
 
-       ;; case 4:  key is there with kids, need to merge in our chain
-       (t
-        (js2-build-alist-trie (list tail) kids))))
-    trie))
+;;        ;; case 4:  key is there with kids, need to merge in our chain
+;;        (t
+;;         (js2-build-alist-trie (list tail) kids))))
+;;     trie))
 
-(defun js2-flatten-trie (trie)
-  "Convert TRIE to imenu-format.
-Recurses through nodes, and for each one whose second element is a list,
-appends the list's flattened elements to the current element.  Also
-changes the tails into conses.  For instance, this pre-flattened trie
+;; (defun js2-flatten-trie (trie)
+;;   "Convert TRIE to imenu-format.
+;; Recurses through nodes, and for each one whose second element is a list,
+;; appends the list's flattened elements to the current element.  Also
+;; changes the tails into conses.  For instance, this pre-flattened trie
 
-'(a ((b 20)
-     (c ((d 30)
-         (e 40)))))
+;; '(a ((b 20)
+;;      (c ((d 30)
+;;          (e 40)))))
 
-becomes
+;; becomes
 
-'(a (b . 20)
-    (c (d . 30)
-       (e . 40)))
+;; '(a (b . 20)
+;;     (c (d . 30)
+;;        (e . 40)))
 
-Note that the root of the trie has no key, just a list of chains.
-This is also true for the value of any key with multiple children,
-e.g. key 'c' in the example above."
-  (cond
-   ((listp (car trie))
-    (mapcar #'js2-flatten-trie trie))
-   (t
-    (if (numberp (second trie))
-        (cons (car trie) (second trie))
-      ;; else pop list and append its kids
-      (apply #'append (list (car trie)) (js2-flatten-trie (cdr trie)))))))
+;; Note that the root of the trie has no key, just a list of chains.
+;; This is also true for the value of any key with multiple children,
+;; e.g. key 'c' in the example above."
+;;   (cond
+;;    ((listp (car trie))
+;;     (mapcar #'js2-flatten-trie trie))
+;;    (t
+;;     (if (numberp (second trie))
+;;         (cons (car trie) (second trie))
+;;       ;; else pop list and append its kids
+;;       (apply #'append (list (car trie)) (js2-flatten-trie (cdr trie)))))))
 
-(defun js2-build-imenu-index ()
-  "Turn `js2-imenu-recorder' into an imenu data structure."
-  (unless (eq js2-imenu-recorder 'empty)
-    (let* ((chains (js2-browse-postprocess-chains js2-imenu-recorder))
-           (result (js2-build-alist-trie chains nil)))
-      (js2-flatten-trie result))))
+;; (defun js2-build-imenu-index ()
+;;   "Turn `js2-imenu-recorder' into an imenu data structure."
+;;   (unless (eq js2-imenu-recorder 'empty)
+;;     (let* ((chains (js2-browse-postprocess-chains js2-imenu-recorder))
+;;            (result (js2-build-alist-trie chains nil)))
+;;       (js2-flatten-trie result))))
 
 (defun js2-test-print-chains (chains)
   "Print a list of qname chains.
@@ -10441,7 +10441,7 @@ If so, we don't ever want to use bounce-indent."
 (eval-when-compile
   (require 'cl))
 
-(require 'imenu)
+;(require 'imenu)
 (require 'cc-cmds)  ; for `c-fill-paragraph'
 
 
@@ -10511,8 +10511,8 @@ If so, we don't ever want to use bounce-indent."
 
   (add-hook 'change-major-mode-hook #'js2-mode-exit nil t)
   (add-hook 'after-change-functions #'js2-mode-edit nil t)
-  (setq imenu-create-index-function #'js2-mode-create-imenu-index)
-  (imenu-add-to-menubar (concat "IM-" mode-name))
+  ;(setq imenu-create-index-function #'js2-mode-create-imenu-index)
+  ;(imenu-add-to-menubar (concat "IM-" mode-name))
   (when js2-mirror-mode
     (js2-enter-mirror-mode))
   (add-to-invisibility-spec '(js2-outline . t))

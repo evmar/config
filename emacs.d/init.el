@@ -45,6 +45,8 @@
 ; interactive buffer switch and file load
 (require 'ido)
 (ido-mode t)
+; allow ido to read large directories
+(setq ido-max-directory-size 100000)
 
 ; Don't require me to type out "yes".
 (fset 'yes-or-no-p 'y-or-n-p)

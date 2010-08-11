@@ -1,3 +1,4 @@
 /emacs.d/auto-save-list/
 /emacs.d/magit/
 *.elc
+*.pyc

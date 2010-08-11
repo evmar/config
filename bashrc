@@ -60,10 +60,6 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
 fi
 
-wgets() {
-  for i in `seq $1 $2`; do eval "url=$3"; wget --user-agent=Firefox $url; done
-}
-
 export LESS='FRiKX'
 
 source ~/.emacs.d/emacs.bash

@@ -23,7 +23,7 @@ link() {
 
 pwd=$(pwd)
 for file in *; do
-    [ "$file" = "config" ] && continue
+    [ "$file" = "link-config" ] && continue
     [ "$file" = "local" ] && continue
     [ "$file" = "." ] && continue
 

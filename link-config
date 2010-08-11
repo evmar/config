@@ -21,18 +21,25 @@ link() {
     trace ln -s $pwd/$file $target
 }
 
+link_subdir() {
+    target=$1
+    for dir in $(find $target -type d); do
+        mkdir -p ~/.$dir
+    done
+    for file in $(find $target -type f); do
+        link $file
+    done
+}
+
 pwd=$(pwd)
 for file in *; do
     [ "$file" = "link-config" ] && continue
     [ "$file" = "local" ] && continue
+    [ "$file" = "config" ] && continue
     [ "$file" = "." ] && continue
 
     link $file
 done
 
-for dir in $(find local -type d); do
-    mkdir -p ~/.$dir
-done
-for file in $(find local -type f); do
-    link $file
-done
+link_subdir local
+link_subdir config

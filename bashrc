@@ -16,6 +16,8 @@ export HISTCONTROL=ignoreboth
 shopt -s histappend
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+HISTSIZE=1000
+HISTFILESIZE=2000
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -58,10 +60,6 @@ fi
 if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
 fi
-
-wgets() {
-  for i in `seq $1 $2`; do eval "url=$3"; wget --user-agent=Firefox $url; done
-}
 
 export LESS='FRiKX'
 

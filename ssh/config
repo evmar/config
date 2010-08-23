@@ -1,0 +1,9 @@
+Host tunnel
+  HostName neugierig.org
+  User martine
+  LocalForward 8888 localhost:8888
+Host neugierig.org
+  User martine
+
+Host evmar
+  HostName 172.31.135.183

@@ -36,6 +36,7 @@ for file in *; do
     [ "$file" = "link-config" ] && continue
     [ "$file" = "local" ] && continue
     [ "$file" = "config" ] && continue
+    [ "$file" = "ssh" ] && continue
     [ "$file" = "." ] && continue
 
     link $file
@@ -43,3 +44,4 @@ done
 
 link_subdir local
 link_subdir config
+link_subdir ssh

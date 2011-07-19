@@ -1,9 +1,12 @@
-Host tunnel
-  HostName neugierig.org
-  User martine
-  LocalForward 8888 localhost:8888
-Host neugierig.org
-  User martine
+Host *
+  ControlMaster auto
+  ControlPath ~/.ssh/cm/%r@%h:%p
 
 Host evmar
-  HostName 172.31.135.183
+  HostName 172.31.135.200
+
+Host trout.local
+  User martine
+
+Host nfs
+  HostName ssh.phx.nearlyfreespeech.net

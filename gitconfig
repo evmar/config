@@ -9,3 +9,6 @@
   b = branch
   d = diff
   co = checkout
+  st = status -s .
+[advice]
+	statusHints = false

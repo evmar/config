@@ -209,3 +209,5 @@ command if we aren't."
         (grep-use-null-device nil))
     (grep (concat "git --no-pager grep -n -e \"" quoted "\" -- "
                   (mapconcat 'identity grepsource-filetypes " ") " | cat"))))
+
+(require 'go-mode-load)

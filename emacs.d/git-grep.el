@@ -1,3 +1,10 @@
+(require 'grep)
+
+(add-to-list 'grep-files-aliases
+             '("s" . "*.h *.hpp *.cpp *.c *.cc *.cpp *.inl *.grd *.idl *.m *.mm *.py *.sh *.cfg *SConscript SConscript* *.scons *.vcproj *.vsprops *.make *.gyp *.gypi"))
+
+(grep-apply-setting 'grep-find-template
+                    "git --no-pager grep -n <C> -e <R> -- <F> | cat")
 
 (defun chomp (str)
   (substring str 0 (- (length str) 1)))

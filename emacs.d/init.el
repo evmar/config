@@ -57,8 +57,6 @@
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
  '(column-number-mode t)
- '(grep-files-aliases (quote (("asm" . "*.[sS]") ("c" . "*.c") ("cc" . "*.cc *.cxx *.cpp *.C *.CC *.c++") ("cchh" . "*.cc *.[ch]xx *.[ch]pp *.[CHh] *.CC *.HH *.[ch]++") ("hh" . "*.hxx *.hpp *.[Hh] *.HH *.h++") ("ch" . "*.[ch]") ("el" . "*.el") ("h" . "*.h") ("l" . "[Cc]hange[Ll]og*") ("m" . "[Mm]akefile*") ("tex" . "*.tex") ("s" . "*.h *.hpp *.cpp *.c *.cc *.cpp *.inl *.grd *.idl *.m *.mm *.py *.sh *.cfg *SConscript SConscript* *.scons *.vcproj *.vsprops *.make *.gyp *.gypi") ("texi" . "*.texi"))))
- '(grep-find-template "git --no-pager grep -n <C> -e <R> -- <F> | cat")
  '(haskell-program-name "ghci")
  '(js2-auto-indent-flag nil)
  '(js2-electric-keys (quote nil))
@@ -192,20 +190,7 @@ See also `newline-and-indent'."
 (add-to-list 'file-coding-system-alist '("\\.vala$" . utf-8))
 (add-to-list 'file-coding-system-alist '("\\.vapi$" . utf-8))
 
-(defconst grepsource-filetypes
-  '("*.h" "*.hpp" "*.cpp" "*.c" "*.cc" "*.cpp" "*.inl" "*.grd" "*.idl" "*.m"
-    "*.mm" "*.py" "*.sh" "*.cfg" "*SConscript" "SConscript*" "*.scons"
-    "*.vcproj" "*.vsprops" "*.make" "*.gyp" "*.gypi")
-  "A list of filetype patterns that grepsource will use.")
-
-(defun grepsource (cmd-args)
-  "Grep `default-directory' using git-grep for speed if we're in
-a git repository and falling back to a big \"find | xargs grep\"
-command if we aren't."
-  (interactive (list (read-from-minibuffer "Grep project for string: ")))
-  (let ((quoted (replace-regexp-in-string "\"" "\\\\\"" cmd-args))
-        (grep-use-null-device nil))
-    (grep (concat "git --no-pager grep -n -e \"" quoted "\" -- "
-                  (mapconcat 'identity grepsource-filetypes " ") " | cat"))))
 
 (require 'go-mode-load)
+
+(require 'git-grep)

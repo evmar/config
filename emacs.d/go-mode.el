@@ -7,7 +7,6 @@
 ;;; To do:
 
 ;; * Indentation is *almost* identical to gofmt
-;; ** We think struct literal keys are labels and outdent them
 ;; ** We disagree on the indentation of function literals in arguments
 ;; ** There are bugs with the close brace of struct literals
 ;; * Highlight identifiers according to their syntactic context: type,
@@ -69,8 +68,8 @@
 some syntax analysis.")
 
 (defvar go-mode-font-lock-keywords
-  (let ((builtins '("cap" "close" "closed" "len" "make" "new"
-                    "panic" "panicln" "print" "println"))
+  (let ((builtins '("append" "cap" "close" "complex" "copy" "imag" "len"
+                    "make" "new" "panic" "print" "println" "real" "recover"))
         (constants '("nil" "true" "false" "iota"))
         (type-name "\\s *\\(?:[*(]\\s *\\)*\\(?:\\w+\\s *\\.\\s *\\)?\\(\\w+\\)")
         )
@@ -401,7 +400,8 @@ indented one level."
                 (setq first nil))))
 
           ;; case, default, and labels are outdented 1 level
-          (when (looking-at "\\<case\\>\\|\\<default\\>\\|\\w+\\s *:\\(\\S.\\|$\\)")
+          ;; assume that labels are alone on the line
+          (when (looking-at "\\<case\\>\\|\\<default\\>\\|\\w+\\s *:\\s *$")
             (decf indent tab-width))
 
           ;; Continuation lines are indented 1 level
@@ -508,7 +508,9 @@ Replace the current buffer on success; display errors on failure."
  (let ((srcbuf (current-buffer)))
    (with-temp-buffer
      (let ((outbuf (current-buffer))
-           (errbuf (get-buffer-create "*Gofmt Errors*")))
+           (errbuf (get-buffer-create "*Gofmt Errors*"))
+           (coding-system-for-read 'utf-8)    ;; use utf-8 with subprocesses
+           (coding-system-for-write 'utf-8))
        (with-current-buffer errbuf (erase-buffer))
        (with-current-buffer srcbuf
          (save-restriction
@@ -522,7 +524,7 @@ Replace the current buffer on success; display errors on failure."
                    (erase-buffer)
                    (insert-buffer-substring outbuf)
                    (goto-char (min old-point (point-max)))
-                   (if old-mark (set-mark (min old-mark (point-max))))
+                   (if old-mark (push-mark (min old-mark (point-max)) t))
                    (kill-buffer errbuf))
 
                ;; gofmt failed: display the errors
@@ -539,5 +541,49 @@ Replace the current buffer on success; display errors on failure."
 
  (interactive)
  (when (eq major-mode 'go-mode) (gofmt)))
+
+
+(defun godoc-read-query ()
+  "Read a godoc query from the minibuffer."
+  ;; Compute the default query as the symbol under the cursor.
+  ;; TODO: This does the wrong thing for e.g. multipart.NewReader (it only grabs
+  ;; half) but I see no way to disambiguate that from e.g. foobar.SomeMethod.
+  (let* ((bounds (bounds-of-thing-at-point 'symbol))
+         (symbol (if bounds
+                     (buffer-substring-no-properties (car bounds) (cdr bounds)))))
+    (read-string (if symbol
+                     (format "godoc (default %s): " symbol)
+                   "godoc: ")
+                 nil nil symbol)))
+
+(defun godoc-get-buffer (query)
+  "Get an empty buffer for a godoc query."
+  (let* ((buffer-name (concat "*godoc " query "*"))
+         (buffer (get-buffer buffer-name)))
+    ;; Kill the existing buffer if it already exists.
+    (when buffer (kill-buffer buffer))
+    (get-buffer-create buffer-name)))
+
+(defun godoc-buffer-sentinel (proc event)
+  "Sentinel function run when godoc command completes."
+  (with-current-buffer (process-buffer proc)
+    (cond ((string= event "finished\n")  ;; Successful exit.
+           (goto-char (point-min))
+           (display-buffer (current-buffer) 'not-this-window))
+          ((not (= (process-exit-status proc) 0))  ;; Error exit.
+           (let ((output (buffer-string)))
+             (kill-buffer (current-buffer))
+             (message (concat "godoc: " output)))))))
+
+;;;###autoload
+(defun godoc (query)
+  "Show go documentation for a query, much like M-x man."
+  (interactive (list (godoc-read-query)))
+  (unless (string= query "")
+    (set-process-sentinel
+     (start-process-shell-command "godoc" (godoc-get-buffer query)
+                                  (concat "godoc " query))
+     'godoc-buffer-sentinel)
+    nil))
 
 (provide 'go-mode)

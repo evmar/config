@@ -42,6 +42,9 @@
 (setq-default chromium-root "/work/chrome/src/")
 (add-to-list 'load-path (concat chromium-root "tools/emacs"))
 
+;(add-to-list 'load-path "~/projects/devhelp-index")
+;(require 'devhelp)
+
 ; start emacs server
 (server-start)
 
@@ -59,9 +62,8 @@
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
+ '(coffee-tab-width 2)
  '(column-number-mode t)
- '(grep-files-aliases (quote (("asm" . "*.[sS]") ("c" . "*.c") ("cc" . "*.cc *.cxx *.cpp *.C *.CC *.c++") ("cchh" . "*.cc *.[ch]xx *.[ch]pp *.[CHh] *.CC *.HH *.[ch]++") ("hh" . "*.hxx *.hpp *.[Hh] *.HH *.h++") ("ch" . "*.[ch]") ("el" . "*.el") ("h" . "*.h") ("l" . "[Cc]hange[Ll]og*") ("m" . "[Mm]akefile*") ("tex" . "*.tex") ("s" . "*.h *.hpp *.cpp *.c *.cc *.cpp *.inl *.grd *.idl *.m *.mm *.py *.sh *.cfg *SConscript SConscript* *.scons *.vcproj *.vsprops *.make *.gyp *.gypi") ("texi" . "*.texi"))))
- '(grep-find-template "git --no-pager grep -n <C> -e <R> -- <F> | cat")
  '(haskell-program-name "ghci")
  '(js2-auto-indent-flag nil)
  '(js2-electric-keys (quote nil))
@@ -70,7 +72,7 @@
  '(org-agenda-files (quote ("~/everything.org")))
  '(paragraph-separate "[ 	]*$\\|-[ ]")
  '(paragraph-start "\\|[ 	]*$\\\\|-[ ]")
- '(safe-local-variable-values (quote ((c-offsets-alist (innamespace . 0)))))
+ '(safe-local-variable-values (quote ((js2-basic-offset . 2) (c-offsets-alist (innamespace . 0)))))
  '(show-paren-mode t)
  '(tool-bar-mode nil)
  '(uniquify-buffer-name-style (quote forward))
@@ -84,8 +86,9 @@
 
 ; Haskell ghci support.
 ;(require 'inf-haskell)
+;(require 'haskell-mode)
 (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-(add-hook 'haskell-mode-hook 'turn-on-haskell-simple-indent)
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 (setq completion-ignored-extensions
       (cons ".hi" completion-ignored-extensions))
 (add-to-list 'auto-mode-alist '("\\.cpphs$" . haskell-mode))
@@ -127,8 +130,8 @@
 ; Markdown
 (autoload 'markdown-mode "markdown-mode.el"
    "Major mode for editing Markdown files" t)
-(setq auto-mode-alist
-   (cons '("\\.text" . markdown-mode) auto-mode-alist))
+(add-to-list 'auto-mode-alist '("\\.text$" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode))
 
 ; Javascript
 (autoload 'js2-mode "js2" nil t)
@@ -192,7 +195,9 @@ See also `newline-and-indent'."
 (global-whitespace-mode)
 
 (setq browse-url-browser-function 'browse-url-generic
-      browse-url-generic-program "google-chrome")
+      browse-url-generic-program "chromium")
+;(require 'w3m-load)
+;(setq browse-url-browser-function 'w3m-browse-url)
 
 (autoload 'vala-mode "vala-mode" "Major mode for editing Vala code." t)
 (add-to-list 'auto-mode-alist '("\\.vala$" . vala-mode))
@@ -206,6 +211,10 @@ See also `newline-and-indent'."
 
 (require 'trybot)
 
+(require 'coffee-mode)
+
+;(require 'pymacs)
+;(pymacs-load "ropemacs" "rope-")
 (add-to-list 'auto-mode-alist '("\\.mm$" . c++-mode))
 
 (defun ami-summarize-indentation-at-point ()

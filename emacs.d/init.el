@@ -38,6 +38,9 @@
 (fringe-mode '(1 . 0))
 
 (add-to-list 'load-path "~/.emacs.d")
+(add-to-list 'load-path "~/.local/share/emacs/site-lisp")
+(setq-default chromium-root "/work/chrome/src/")
+(add-to-list 'load-path (concat chromium-root "tools/emacs"))
 
 ; start emacs server
 (server-start)
@@ -64,12 +67,14 @@
  '(js2-electric-keys (quote nil))
  '(js2-mirror-mode nil)
  '(js2-mode-escape-quotes nil)
- '(markdown-command "pandoc -f markdown")
  '(org-agenda-files (quote ("~/everything.org")))
+ '(paragraph-separate "[ 	]*$\\|-[ ]")
+ '(paragraph-start "\\|[ 	]*$\\\\|-[ ]")
  '(safe-local-variable-values (quote ((c-offsets-alist (innamespace . 0)))))
  '(show-paren-mode t)
  '(tool-bar-mode nil)
- '(uniquify-buffer-name-style (quote forward)))
+ '(uniquify-buffer-name-style (quote forward))
+ '(vc-handled-backends (quote (RCS CVS SVN SCCS Bzr Hg Arch))))
 (custom-set-faces
   ;; custom-set-faces was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.
@@ -164,7 +169,10 @@ See also `newline-and-indent'."
 
 (global-set-key (kbd "M-`") 'next-error)
 
-(global-set-key [f7] 'recompile)
+(global-set-key [f7] (lambda ()
+                       (interactive)
+                       (save-excursion (switch-to-buffer "*compilation*")
+                                       (recompile))))
 (global-set-key (kbd "M-`") 'next-error)
 
 (defun autocompile nil
@@ -192,20 +200,31 @@ See also `newline-and-indent'."
 (add-to-list 'file-coding-system-alist '("\\.vala$" . utf-8))
 (add-to-list 'file-coding-system-alist '("\\.vapi$" . utf-8))
 
-(defconst grepsource-filetypes
-  '("*.h" "*.hpp" "*.cpp" "*.c" "*.cc" "*.cpp" "*.inl" "*.grd" "*.idl" "*.m"
-    "*.mm" "*.py" "*.sh" "*.cfg" "*SConscript" "SConscript*" "*.scons"
-    "*.vcproj" "*.vsprops" "*.make" "*.gyp" "*.gypi")
-  "A list of filetype patterns that grepsource will use.")
-
-(defun grepsource (cmd-args)
-  "Grep `default-directory' using git-grep for speed if we're in
-a git repository and falling back to a big \"find | xargs grep\"
-command if we aren't."
-  (interactive (list (read-from-minibuffer "Grep project for string: ")))
-  (let ((quoted (replace-regexp-in-string "\"" "\\\\\"" cmd-args))
-        (grep-use-null-device nil))
-    (grep (concat "git --no-pager grep -n -e \"" quoted "\" -- "
-                  (mapconcat 'identity grepsource-filetypes " ") " | cat"))))
+(require 'git-grep)
 
 (require 'go-mode-load)
+
+(require 'trybot)
+
+(add-to-list 'auto-mode-alist '("\\.mm$" . c++-mode))
+
+(defun ami-summarize-indentation-at-point ()
+  "Echo a summary of how one gets from the left-most column to
+  POINT in terms of indentation changes."
+  (interactive)
+  (save-excursion
+    (let ((cur-indent most-positive-fixnum)
+          (trace '()))
+      (while (not (bobp))
+        (let ((current-line (buffer-substring (line-beginning-position)
+                                              (line-end-position))))
+          (when (and (not (string-match "^\\s-*$" current-line))
+                     (< (current-indentation) cur-indent))
+            (setq cur-indent (current-indentation))
+            (setq trace (cons current-line trace))
+            (if (or (string-match "^\\s-*}" current-line)
+                    (string-match "^\\s-*else " current-line)
+                    (string-match "^\\s-*elif " current-line))
+                (setq cur-indent (1+ cur-indent)))))
+        (forward-line -1))
+      (message "%s" (mapconcat 'identity trace "\n")))))

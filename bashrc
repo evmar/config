@@ -65,7 +65,7 @@ export LESS='FRiKX'
 source ~/.emacs.d/emacs.bash
 alias e="emacsclient -a '' -c -n"
 
--r /work/chrome/env.sh && source /work/chrome/env.sh
+[ -r /work/chrome/env.sh ] && source /work/chrome/env.sh
 
 imgur(){
 for i in "$@";do

@@ -61,6 +61,7 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
 fi
 
 export LESS='FRiKX'
+export BROWSER=google-chrome
 
 source ~/.emacs.d/emacs.bash
 alias e="emacsclient -a '' -c -n"

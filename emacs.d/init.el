@@ -215,6 +215,8 @@ See also `newline-and-indent'."
 (require 'js)
 (add-to-list 'auto-mode-alist '("\\.js$" . js-mode))
 
+(require '50magit)
+
 ;(require 'pymacs)
 ;(pymacs-load "ropemacs" "rope-")
 (add-to-list 'auto-mode-alist '("\\.mm$" . c++-mode))

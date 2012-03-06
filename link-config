@@ -43,5 +43,4 @@ for file in *; do
 done
 
 link_subdir local
-link_subdir config
 link_subdir ssh

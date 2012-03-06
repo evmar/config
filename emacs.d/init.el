@@ -65,6 +65,7 @@
  '(coffee-tab-width 2)
  '(column-number-mode t)
  '(haskell-program-name "ghci")
+ '(js-indent-level 2)
  '(js2-auto-indent-flag nil)
  '(js2-electric-keys (quote nil))
  '(js2-mirror-mode nil)
@@ -195,7 +196,7 @@ See also `newline-and-indent'."
 (global-whitespace-mode)
 
 (setq browse-url-browser-function 'browse-url-generic
-      browse-url-generic-program "chromium")
+      browse-url-generic-program (getenv "BROWSER"))
 ;(require 'w3m-load)
 ;(setq browse-url-browser-function 'w3m-browse-url)
 
@@ -209,9 +210,10 @@ See also `newline-and-indent'."
 
 (require 'go-mode-load)
 
-(require 'trybot)
-
 (require 'coffee-mode)
+
+(require 'js)
+(add-to-list 'auto-mode-alist '("\\.js$" . js-mode))
 
 ;(require 'pymacs)
 ;(pymacs-load "ropemacs" "rope-")

@@ -38,7 +38,12 @@
 (fringe-mode '(1 . 0))
 
 (add-to-list 'load-path "~/.emacs.d")
-(add-to-list 'load-path "~/projects/devhelp-index")
+(add-to-list 'load-path "~/.local/share/emacs/site-lisp")
+(setq-default chromium-root "/work/chrome/src/")
+(add-to-list 'load-path (concat chromium-root "tools/emacs"))
+
+;(add-to-list 'load-path "~/projects/devhelp-index")
+;(require 'devhelp)
 
 ; start emacs server
 (server-start)
@@ -65,10 +70,13 @@
  '(js2-mirror-mode nil)
  '(js2-mode-escape-quotes nil)
  '(org-agenda-files (quote ("~/everything.org")))
+ '(paragraph-separate "[ 	]*$\\|-[ ]")
+ '(paragraph-start "\\|[ 	]*$\\\\|-[ ]")
  '(safe-local-variable-values (quote ((js2-basic-offset . 2) (c-offsets-alist (innamespace . 0)))))
  '(show-paren-mode t)
  '(tool-bar-mode nil)
- '(uniquify-buffer-name-style (quote forward)))
+ '(uniquify-buffer-name-style (quote forward))
+ '(vc-handled-backends (quote (RCS CVS SVN SCCS Bzr Hg Arch))))
 (custom-set-faces
   ;; custom-set-faces was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.
@@ -78,7 +86,7 @@
 
 ; Haskell ghci support.
 ;(require 'inf-haskell)
-(require 'haskell-mode)
+;(require 'haskell-mode)
 (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 (setq completion-ignored-extensions
@@ -164,7 +172,10 @@ See also `newline-and-indent'."
 
 (global-set-key (kbd "M-`") 'next-error)
 
-(global-set-key [f7] 'recompile)
+(global-set-key [f7] (lambda ()
+                       (interactive)
+                       (save-excursion (switch-to-buffer "*compilation*")
+                                       (recompile))))
 (global-set-key (kbd "M-`") 'next-error)
 
 (defun autocompile nil
@@ -183,9 +194,9 @@ See also `newline-and-indent'."
 (setq whitespace-style '(lines-tail))
 (global-whitespace-mode)
 
-(require 'w3m-load)
 (setq browse-url-browser-function 'browse-url-generic
       browse-url-generic-program "chromium")
+;(require 'w3m-load)
 ;(setq browse-url-browser-function 'w3m-browse-url)
 
 (autoload 'vala-mode "vala-mode" "Major mode for editing Vala code." t)
@@ -194,14 +205,35 @@ See also `newline-and-indent'."
 (add-to-list 'file-coding-system-alist '("\\.vala$" . utf-8))
 (add-to-list 'file-coding-system-alist '("\\.vapi$" . utf-8))
 
+(require 'git-grep)
 
 (require 'go-mode-load)
 
-(require 'git-grep)
-
-(require 'devhelp)
+(require 'trybot)
 
 (require 'coffee-mode)
 
 ;(require 'pymacs)
 ;(pymacs-load "ropemacs" "rope-")
+(add-to-list 'auto-mode-alist '("\\.mm$" . c++-mode))
+
+(defun ami-summarize-indentation-at-point ()
+  "Echo a summary of how one gets from the left-most column to
+  POINT in terms of indentation changes."
+  (interactive)
+  (save-excursion
+    (let ((cur-indent most-positive-fixnum)
+          (trace '()))
+      (while (not (bobp))
+        (let ((current-line (buffer-substring (line-beginning-position)
+                                              (line-end-position))))
+          (when (and (not (string-match "^\\s-*$" current-line))
+                     (< (current-indentation) cur-indent))
+            (setq cur-indent (current-indentation))
+            (setq trace (cons current-line trace))
+            (if (or (string-match "^\\s-*}" current-line)
+                    (string-match "^\\s-*else " current-line)
+                    (string-match "^\\s-*elif " current-line))
+                (setq cur-indent (1+ cur-indent)))))
+        (forward-line -1))
+      (message "%s" (mapconcat 'identity trace "\n")))))

@@ -39,8 +39,6 @@
 
 (add-to-list 'load-path "~/.emacs.d")
 (add-to-list 'load-path "~/.local/share/emacs/site-lisp")
-(setq-default chromium-root "/work/chrome/src/")
-(add-to-list 'load-path (concat chromium-root "tools/emacs"))
 
 ;(add-to-list 'load-path "~/projects/devhelp-index")
 ;(require 'devhelp)

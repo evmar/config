@@ -231,7 +231,7 @@
   :group 'wp
   :link '(url-link "http://jblevins.org/projects/markdown-mode/"))
 
-(defcustom markdown-command "markdown"
+(defcustom markdown-command "markdown /dev/stdin"
   "Command to run markdown."
   :group 'markdown
   :type 'string)

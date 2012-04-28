@@ -9,5 +9,12 @@ Host trout
   HostName trout.local
   User martine
 
+Host kitten
+  User evmar
+
+Host mouse
+  User evmar
+  ForwardAgent yes
+
 Host nfs
   HostName ssh.phx.nearlyfreespeech.net

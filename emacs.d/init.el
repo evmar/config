@@ -215,6 +215,7 @@ See also `newline-and-indent'."
 (require 'js)
 (add-to-list 'auto-mode-alist '("\\.js$" . js-mode))
 
+(add-to-list 'load-path "~/.emacs.d/magit")
 (require '50magit)
 
 ;(require 'pymacs)

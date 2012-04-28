@@ -210,6 +210,8 @@ See also `newline-and-indent'."
 
 (require 'coffee-mode)
 
+(require 'ninja-mode)
+
 (require 'js)
 (add-to-list 'auto-mode-alist '("\\.js$" . js-mode))
 

@@ -140,6 +140,7 @@
 (add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode))
 
 ; Javascript
+(require 'js)
 (add-to-list 'auto-mode-alist '("\\.js$" . js-mode))
 (add-to-list 'auto-mode-alist '("\\.json$" . js-mode))
 
@@ -217,9 +218,6 @@ See also `newline-and-indent'."
 (require 'coffee-mode)
 
 (require 'ninja-mode)
-
-(require 'js)
-(add-to-list 'auto-mode-alist '("\\.js$" . js-mode))
 
 (require '50magit)
 

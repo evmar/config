@@ -64,6 +64,10 @@
   ;; If there is more than one, they won't work right.
  '(coffee-tab-width 2)
  '(column-number-mode t)
+ '(erc-hide-list (quote ("JOIN" "PART" "QUIT")))
+ '(erc-nick "evmar")
+ '(erc-server "irc.oftc.net")
+ '(erc-user-full-name "Evan Martin")
  '(haskell-program-name "ghci")
  '(js-indent-level 2)
  '(js2-auto-indent-flag nil)

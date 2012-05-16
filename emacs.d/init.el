@@ -42,8 +42,6 @@
 
 (add-to-list 'load-path "~/.emacs.d")
 (add-to-list 'load-path "~/.local/share/emacs/site-lisp")
-(setq-default chromium-root "/work/chrome/src/")
-(add-to-list 'load-path (concat chromium-root "tools/emacs"))
 
 ;(add-to-list 'load-path "~/projects/devhelp-index")
 ;(require 'devhelp)
@@ -214,6 +212,8 @@ See also `newline-and-indent'."
 (require 'go-mode-load)
 
 (require 'coffee-mode)
+
+(require 'ninja-mode)
 
 (require 'js)
 (add-to-list 'auto-mode-alist '("\\.js$" . js-mode))

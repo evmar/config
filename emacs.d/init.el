@@ -129,9 +129,6 @@
   (insert "Timestamp: ") (timestamp) (insert "\n")
   (insert "Subject: "))
 
-; Chromium!
-(require 'chromium)
-
 ; Markdown
 (autoload 'markdown-mode "markdown-mode.el"
    "Major mode for editing Markdown files" t)

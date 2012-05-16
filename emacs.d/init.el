@@ -90,6 +90,9 @@
   ;; If there is more than one, they won't work right.
  '(whitespace-line ((t (:underline t)))))
 
+(require 'google-c-style)
+(add-hook 'c-mode-common-hook 'google-set-c-style)
+
 ; Haskell ghci support.
 ;(require 'inf-haskell)
 ;(require 'haskell-mode)

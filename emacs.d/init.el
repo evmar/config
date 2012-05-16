@@ -37,6 +37,9 @@
 ; reduce big gray margins on window
 (fringe-mode '(1 . 0))
 
+; auto-revert to on-disk file versions
+(global-auto-revert-mode)
+
 (add-to-list 'load-path "~/.emacs.d")
 (add-to-list 'load-path "~/.local/share/emacs/site-lisp")
 (setq-default chromium-root "/work/chrome/src/")

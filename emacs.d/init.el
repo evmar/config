@@ -136,9 +136,8 @@
 (add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode))
 
 ; Javascript
-(autoload 'js2-mode "js2" nil t)
-(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-(add-to-list 'auto-mode-alist '("\\.json$" . js2-mode))
+(add-to-list 'auto-mode-alist '("\\.js$" . js-mode))
+(add-to-list 'auto-mode-alist '("\\.json$" . js-mode))
 
 ; SCons
 (add-to-list 'auto-mode-alist '("\\.scons$" . python-mode))

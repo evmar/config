@@ -37,8 +37,14 @@
 ; reduce big gray margins on window
 (fringe-mode '(1 . 0))
 
+; auto-revert to on-disk file versions
+(global-auto-revert-mode)
+
 (add-to-list 'load-path "~/.emacs.d")
-(add-to-list 'load-path "~/projects/devhelp-index")
+(add-to-list 'load-path "~/.local/share/emacs/site-lisp")
+
+;(add-to-list 'load-path "~/projects/devhelp-index")
+;(require 'devhelp)
 
 ; start emacs server
 (server-start)
@@ -59,16 +65,24 @@
   ;; If there is more than one, they won't work right.
  '(coffee-tab-width 2)
  '(column-number-mode t)
+ '(erc-hide-list (quote ("JOIN" "PART" "QUIT")))
+ '(erc-nick "evmar")
+ '(erc-server "irc.oftc.net")
+ '(erc-user-full-name "Evan Martin")
  '(haskell-program-name "ghci")
+ '(js-indent-level 2)
  '(js2-auto-indent-flag nil)
  '(js2-electric-keys (quote nil))
  '(js2-mirror-mode nil)
  '(js2-mode-escape-quotes nil)
  '(org-agenda-files (quote ("~/everything.org")))
+ '(paragraph-separate "[ 	]*$\\|-[ ]")
+ '(paragraph-start "\\|[ 	]*$\\\\|-[ ]")
  '(safe-local-variable-values (quote ((js2-basic-offset . 2) (c-offsets-alist (innamespace . 0)))))
  '(show-paren-mode t)
  '(tool-bar-mode nil)
- '(uniquify-buffer-name-style (quote forward)))
+ '(uniquify-buffer-name-style (quote forward))
+ '(vc-handled-backends (quote (RCS CVS SVN SCCS Bzr Hg Arch))))
 (custom-set-faces
   ;; custom-set-faces was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.
@@ -76,9 +90,12 @@
   ;; If there is more than one, they won't work right.
  '(whitespace-line ((t (:underline t)))))
 
+(require 'google-c-style)
+(add-hook 'c-mode-common-hook 'google-set-c-style)
+
 ; Haskell ghci support.
 ;(require 'inf-haskell)
-(require 'haskell-mode)
+;(require 'haskell-mode)
 (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 (setq completion-ignored-extensions
@@ -116,9 +133,6 @@
   (insert "Timestamp: ") (timestamp) (insert "\n")
   (insert "Subject: "))
 
-; Chromium!
-(require 'chromium)
-
 ; Markdown
 (autoload 'markdown-mode "markdown-mode.el"
    "Major mode for editing Markdown files" t)
@@ -126,9 +140,9 @@
 (add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode))
 
 ; Javascript
-(autoload 'js2-mode "js2" nil t)
-(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-(add-to-list 'auto-mode-alist '("\\.json$" . js2-mode))
+(require 'js)
+(add-to-list 'auto-mode-alist '("\\.js$" . js-mode))
+(add-to-list 'auto-mode-alist '("\\.json$" . js-mode))
 
 ; SCons
 (add-to-list 'auto-mode-alist '("\\.scons$" . python-mode))
@@ -164,7 +178,10 @@ See also `newline-and-indent'."
 
 (global-set-key (kbd "M-`") 'next-error)
 
-(global-set-key [f7] 'recompile)
+(global-set-key [f7] (lambda ()
+                       (interactive)
+                       (save-excursion (switch-to-buffer "*compilation*")
+                                       (recompile))))
 (global-set-key (kbd "M-`") 'next-error)
 
 (defun autocompile nil
@@ -183,9 +200,9 @@ See also `newline-and-indent'."
 (setq whitespace-style '(lines-tail))
 (global-whitespace-mode)
 
-(require 'w3m-load)
 (setq browse-url-browser-function 'browse-url-generic
-      browse-url-generic-program "chromium")
+      browse-url-generic-program (getenv "BROWSER"))
+;(require 'w3m-load)
 ;(setq browse-url-browser-function 'w3m-browse-url)
 
 (autoload 'vala-mode "vala-mode" "Major mode for editing Vala code." t)
@@ -194,14 +211,37 @@ See also `newline-and-indent'."
 (add-to-list 'file-coding-system-alist '("\\.vala$" . utf-8))
 (add-to-list 'file-coding-system-alist '("\\.vapi$" . utf-8))
 
+(require 'git-grep)
 
 (require 'go-mode-load)
 
-(require 'git-grep)
-
-(require 'devhelp)
-
 (require 'coffee-mode)
+
+(require 'ninja-mode)
+
+(require '50magit)
 
 ;(require 'pymacs)
 ;(pymacs-load "ropemacs" "rope-")
+(add-to-list 'auto-mode-alist '("\\.mm$" . c++-mode))
+
+(defun ami-summarize-indentation-at-point ()
+  "Echo a summary of how one gets from the left-most column to
+  POINT in terms of indentation changes."
+  (interactive)
+  (save-excursion
+    (let ((cur-indent most-positive-fixnum)
+          (trace '()))
+      (while (not (bobp))
+        (let ((current-line (buffer-substring (line-beginning-position)
+                                              (line-end-position))))
+          (when (and (not (string-match "^\\s-*$" current-line))
+                     (< (current-indentation) cur-indent))
+            (setq cur-indent (current-indentation))
+            (setq trace (cons current-line trace))
+            (if (or (string-match "^\\s-*}" current-line)
+                    (string-match "^\\s-*else " current-line)
+                    (string-match "^\\s-*elif " current-line))
+                (setq cur-indent (1+ cur-indent)))))
+        (forward-line -1))
+      (message "%s" (mapconcat 'identity trace "\n")))))

@@ -12,3 +12,5 @@
   st = status -s .
 [advice]
 	statusHints = false
+[receive]
+	denyCurrentBranch = warn

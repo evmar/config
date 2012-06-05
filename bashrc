@@ -61,6 +61,17 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
 fi
 
 export LESS='FRiKX'
+export P4CONFIG=.p4config
+export BROWSER=google-chrome
 
 source ~/.emacs.d/emacs.bash
 alias e="emacsclient -a '' -c -n"
+
+imgur(){
+for i in "$@";do
+curl -# -F "image"=@"$i" -F "key"="4907fcd89e761c6b07eeb8292d5a9b2a" http://imgur.com/api/upload.xml|\
+grep -Eo '<[a-z_]+>http[^<]+'|sed 's/^<.\|_./\U&/g;s/_/ /;s/<\(.*\)>/\x1B[0;34m\1:\x1B[0m /'
+done
+}
+
+export PATH=~/.local/bin:~/mirror:$PATH

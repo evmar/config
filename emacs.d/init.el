@@ -248,3 +248,5 @@ See also `newline-and-indent'."
                 (setq cur-indent (1+ cur-indent)))))
         (forward-line -1))
       (message "%s" (mapconcat 'identity trace "\n")))))
+
+(scroll-bar-mode -1)

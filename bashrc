@@ -1,7 +1,3 @@
-# ~/.bashrc: executed by bash(1) for non-login shells.
-# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
-# for examples
-
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
@@ -61,7 +57,6 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
 fi
 
 export LESS='FRiKX'
-export P4CONFIG=.p4config
 export BROWSER=google-chrome
 
 source ~/.emacs.d/emacs.bash
@@ -74,4 +69,6 @@ grep -Eo '<[a-z_]+>http[^<]+'|sed 's/^<.\|_./\U&/g;s/_/ /;s/<\(.*\)>/\x1B[0;34m\
 done
 }
 
-export PATH=~/.local/bin:~/mirror:$PATH
+export PATH=~/.local/bin:$PATH
+
+[ -e ~/.bashrc.local ] && . ~/.bashrc.local

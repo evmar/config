@@ -70,6 +70,7 @@
  '(erc-server "irc.oftc.net")
  '(erc-user-full-name "Evan Martin")
  '(haskell-program-name "ghci")
+ '(ido-enable-tramp-completion nil)
  '(js-indent-level 2)
  '(js2-auto-indent-flag nil)
  '(js2-electric-keys (quote nil))

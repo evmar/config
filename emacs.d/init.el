@@ -221,6 +221,8 @@ See also `newline-and-indent'."
 
 (require '50magit)
 
+(require 'protobuf-mode)
+
 ;(require 'pymacs)
 ;(pymacs-load "ropemacs" "rope-")
 (add-to-list 'auto-mode-alist '("\\.mm$" . c++-mode))

@@ -70,6 +70,7 @@
  '(erc-server "irc.oftc.net")
  '(erc-user-full-name "Evan Martin")
  '(haskell-program-name "ghci")
+ '(ido-enable-tramp-completion nil)
  '(js-indent-level 2)
  '(js2-auto-indent-flag nil)
  '(js2-electric-keys (quote nil))
@@ -221,6 +222,8 @@ See also `newline-and-indent'."
 
 (require '50magit)
 
+(require 'protobuf-mode)
+
 ;(require 'pymacs)
 ;(pymacs-load "ropemacs" "rope-")
 (add-to-list 'auto-mode-alist '("\\.mm$" . c++-mode))
@@ -245,3 +248,5 @@ See also `newline-and-indent'."
                 (setq cur-indent (1+ cur-indent)))))
         (forward-line -1))
       (message "%s" (mapconcat 'identity trace "\n")))))
+
+(scroll-bar-mode -1)

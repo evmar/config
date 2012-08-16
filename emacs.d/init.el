@@ -43,8 +43,8 @@
 (add-to-list 'load-path "~/.emacs.d")
 (add-to-list 'load-path "~/.local/share/emacs/site-lisp")
 
-;(add-to-list 'load-path "~/projects/devhelp-index")
-;(require 'devhelp)
+(add-to-list 'load-path "~/projects/devhelp-index")
+(require 'devhelp)
 
 ; start emacs server
 (server-start)
@@ -79,7 +79,7 @@
  '(org-agenda-files (quote ("~/everything.org")))
  '(paragraph-separate "[ 	]*$\\|-[ ]")
  '(paragraph-start "\\|[ 	]*$\\\\|-[ ]")
- '(safe-local-variable-values (quote ((js2-basic-offset . 2) (c-offsets-alist (innamespace . 0)))))
+ '(safe-local-variable-values (quote ((c-offsets-alist (innamespace . 0)))))
  '(show-paren-mode t)
  '(tool-bar-mode nil)
  '(uniquify-buffer-name-style (quote forward))

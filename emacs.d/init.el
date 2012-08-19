@@ -37,11 +37,14 @@
 ; reduce big gray margins on window
 (fringe-mode '(1 . 0))
 
+; auto-revert to on-disk file versions
+(global-auto-revert-mode)
+
 (add-to-list 'load-path "~/.emacs.d")
 (add-to-list 'load-path "~/.local/share/emacs/site-lisp")
 
-;(add-to-list 'load-path "~/projects/devhelp-index")
-;(require 'devhelp)
+(add-to-list 'load-path "~/projects/devhelp-index")
+(require 'devhelp)
 
 ; start emacs server
 (server-start)
@@ -62,7 +65,12 @@
   ;; If there is more than one, they won't work right.
  '(coffee-tab-width 2)
  '(column-number-mode t)
+ '(erc-hide-list (quote ("JOIN" "PART" "QUIT")))
+ '(erc-nick "evmar")
+ '(erc-server "irc.oftc.net")
+ '(erc-user-full-name "Evan Martin")
  '(haskell-program-name "ghci")
+ '(ido-enable-tramp-completion nil)
  '(js-indent-level 2)
  '(js2-auto-indent-flag nil)
  '(js2-electric-keys (quote nil))
@@ -71,7 +79,7 @@
  '(org-agenda-files (quote ("~/everything.org")))
  '(paragraph-separate "[ 	]*$\\|-[ ]")
  '(paragraph-start "\\|[ 	]*$\\\\|-[ ]")
- '(safe-local-variable-values (quote ((js2-basic-offset . 2) (c-offsets-alist (innamespace . 0)))))
+ '(safe-local-variable-values (quote ((c-offsets-alist (innamespace . 0)))))
  '(show-paren-mode t)
  '(tool-bar-mode nil)
  '(uniquify-buffer-name-style (quote forward))
@@ -82,6 +90,9 @@
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
  '(whitespace-line ((t (:underline t)))))
+
+(require 'google-c-style)
+(add-hook 'c-mode-common-hook 'google-set-c-style)
 
 ; Haskell ghci support.
 ;(require 'inf-haskell)
@@ -123,9 +134,6 @@
   (insert "Timestamp: ") (timestamp) (insert "\n")
   (insert "Subject: "))
 
-; Chromium!
-(require 'chromium)
-
 ; Markdown
 (autoload 'markdown-mode "markdown-mode.el"
    "Major mode for editing Markdown files" t)
@@ -133,9 +141,9 @@
 (add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode))
 
 ; Javascript
-(autoload 'js2-mode "js2" nil t)
-(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-(add-to-list 'auto-mode-alist '("\\.json$" . js2-mode))
+(require 'js)
+(add-to-list 'auto-mode-alist '("\\.js$" . js-mode))
+(add-to-list 'auto-mode-alist '("\\.json$" . js-mode))
 
 ; SCons
 (add-to-list 'auto-mode-alist '("\\.scons$" . python-mode))
@@ -218,6 +226,8 @@ See also `newline-and-indent'."
 (add-to-list 'load-path "~/.emacs.d/magit")
 (require '50magit)
 
+(require 'protobuf-mode)
+
 ;(require 'pymacs)
 ;(pymacs-load "ropemacs" "rope-")
 (add-to-list 'auto-mode-alist '("\\.mm$" . c++-mode))
@@ -242,3 +252,5 @@ See also `newline-and-indent'."
                 (setq cur-indent (1+ cur-indent)))))
         (forward-line -1))
       (message "%s" (mapconcat 'identity trace "\n")))))
+
+(scroll-bar-mode -1)

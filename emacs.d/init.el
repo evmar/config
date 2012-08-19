@@ -38,7 +38,7 @@
 (fringe-mode '(1 . 0))
 
 ; auto-revert to on-disk file versions
-(global-auto-revert-mode)
+(global-auto-revert-mode 1)
 
 (add-to-list 'load-path "~/.emacs.d")
 (add-to-list 'load-path "~/.local/share/emacs/site-lisp")
@@ -253,7 +253,6 @@ See also `newline-and-indent'."
       (message "%s" (mapconcat 'identity trace "\n")))))
 
 (scroll-bar-mode -1)
-(global-auto-revert-mode)
 
 (add-to-list 'load-path "~/.emacs.d/evil")
 (require 'evil)

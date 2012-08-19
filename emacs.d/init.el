@@ -43,6 +43,14 @@
 (add-to-list 'load-path "~/.emacs.d")
 (add-to-list 'load-path "~/.local/share/emacs/site-lisp")
 
+; disable scroll bars
+(scroll-bar-mode -1)
+
+; evil mode
+(add-to-list 'load-path "~/.emacs.d/evil")
+(require 'evil)
+(evil-mode 1)
+
 (require 'devhelp)
 
 ; start emacs server
@@ -223,9 +231,3 @@
                 (setq cur-indent (1+ cur-indent)))))
         (forward-line -1))
       (message "%s" (mapconcat 'identity trace "\n")))))
-
-(scroll-bar-mode -1)
-
-(add-to-list 'load-path "~/.emacs.d/evil")
-(require 'evil)
-(evil-mode 1)

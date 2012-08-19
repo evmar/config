@@ -43,7 +43,6 @@
 (add-to-list 'load-path "~/.emacs.d")
 (add-to-list 'load-path "~/.local/share/emacs/site-lisp")
 
-(add-to-list 'load-path "~/projects/devhelp-index")
 (require 'devhelp)
 
 ; start emacs server
@@ -254,3 +253,8 @@ See also `newline-and-indent'."
       (message "%s" (mapconcat 'identity trace "\n")))))
 
 (scroll-bar-mode -1)
+(global-auto-revert-mode)
+
+(add-to-list 'load-path "~/.emacs.d/evil")
+(require 'evil)
+(evil-mode 1)

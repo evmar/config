@@ -82,7 +82,7 @@
  '(show-paren-mode t)
  '(tool-bar-mode nil)
  '(uniquify-buffer-name-style (quote forward))
- '(vc-handled-backends (quote (RCS CVS SVN SCCS Bzr Hg Arch))))
+ '(vc-handled-backends nil))
 (custom-set-faces
   ;; custom-set-faces was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.

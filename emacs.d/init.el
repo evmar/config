@@ -93,6 +93,7 @@
 
 (require 'google-c-style)
 (add-hook 'c-mode-common-hook 'google-set-c-style)
+(add-to-list 'auto-mode-alist '("^BUILD$" . python-mode))
 
 ; Haskell ghci support.
 ;(require 'inf-haskell)

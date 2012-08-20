@@ -38,13 +38,12 @@
 (fringe-mode '(1 . 0))
 
 ; auto-revert to on-disk file versions
-(global-auto-revert-mode)
+(global-auto-revert-mode 1)
 
 (add-to-list 'load-path "~/.emacs.d")
 (add-to-list 'load-path "~/.local/share/emacs/site-lisp")
 
-;(add-to-list 'load-path "~/projects/devhelp-index")
-;(require 'devhelp)
+(require 'devhelp)
 
 ; start emacs server
 (server-start)
@@ -79,7 +78,7 @@
  '(org-agenda-files (quote ("~/everything.org")))
  '(paragraph-separate "[ 	]*$\\|-[ ]")
  '(paragraph-start "\\|[ 	]*$\\\\|-[ ]")
- '(safe-local-variable-values (quote ((js2-basic-offset . 2) (c-offsets-alist (innamespace . 0)))))
+ '(safe-local-variable-values (quote ((c-offsets-alist (innamespace . 0)))))
  '(show-paren-mode t)
  '(tool-bar-mode nil)
  '(uniquify-buffer-name-style (quote forward))
@@ -221,6 +220,10 @@ See also `newline-and-indent'."
 
 (require 'ninja-mode)
 
+(require 'js)
+(add-to-list 'auto-mode-alist '("\\.js$" . js-mode))
+
+(add-to-list 'load-path "~/.emacs.d/magit")
 (require '50magit)
 
 (require 'protobuf-mode)
@@ -251,3 +254,7 @@ See also `newline-and-indent'."
       (message "%s" (mapconcat 'identity trace "\n")))))
 
 (scroll-bar-mode -1)
+
+(add-to-list 'load-path "~/.emacs.d/evil")
+(require 'evil)
+(evil-mode 1)

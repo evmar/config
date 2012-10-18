@@ -208,6 +208,9 @@
 
 (require 'protobuf-mode)
 
+(add-to-list 'load-path "~/.emacs.d/rust")
+(require 'rust-mode)
+
 ;(require 'pymacs)
 ;(pymacs-load "ropemacs" "rope-")
 (add-to-list 'auto-mode-alist '("\\.mm$" . c++-mode))

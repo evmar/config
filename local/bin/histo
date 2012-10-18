@@ -1,0 +1,28 @@
+#!/usr/bin/python
+
+from optparse import OptionParser
+import fileinput
+
+parser = OptionParser()
+parser.add_option('-k', dest='field', type='int', default=1,
+                  help="histogram on field number F", metavar='F')
+(opts, args) = parser.parse_args()
+
+opts.field -= 1  # 0-based indexing.
+
+hist = []
+for line in fileinput.input(args):
+    fields = line.split()
+    line_without_num = ' '.join(fields[0:opts.field] + fields[opts.field+1:])
+    hist.append((line_without_num, int(fields[opts.field])))
+
+max_text_len = max(len(text) for text, _ in hist)
+max_count = max(count for _, count in hist)
+
+cols = 78
+cols_for_hist = cols - max_text_len - 1
+
+for text, count in hist:
+    print text + (' ' * (max_text_len - len(text))),
+    print '#' * int(round(count * cols_for_hist / float(max_count)))
+

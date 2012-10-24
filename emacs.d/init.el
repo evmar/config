@@ -203,13 +203,17 @@
 (require 'js)
 (add-to-list 'auto-mode-alist '("\\.js$" . js-mode))
 
-(add-to-list 'load-path "~/.emacs.d/magit")
-(require '50magit)
+(if (file-exists-p "~/.emacs.d/magit/50magit.el")
+    (progn
+      (add-to-list 'load-path "~/.emacs.d/magit")
+      (require '50magit)))
 
 (require 'protobuf-mode)
 
-(add-to-list 'load-path "~/.emacs.d/rust")
-(require 'rust-mode)
+(if (file-exists-p "~/.emacs.d/rust/rust.el")
+    (progn
+      (add-to-list 'load-path "~/.emacs.d/rust")
+      (require 'rust-mode)))
 
 ;(require 'pymacs)
 ;(pymacs-load "ropemacs" "rope-")
@@ -235,3 +239,6 @@
                 (setq cur-indent (1+ cur-indent)))))
         (forward-line -1))
       (message "%s" (mapconcat 'identity trace "\n")))))
+
+(if (eq system-type 'windows-nt)
+    (set-face-attribute 'default nil :font "Consolas-11"))

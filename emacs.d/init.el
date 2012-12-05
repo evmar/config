@@ -97,7 +97,7 @@
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
- '(whitespace-line ((t (:underline t)))))
+ '(whitespace-line ((t (:underline "red")))))
 
 (require 'google-c-style)
 (add-hook 'c-mode-common-hook 'google-set-c-style)
@@ -178,8 +178,8 @@
 ; Only use whitespace mode for overlong lines; its end-of-line whitespace
 ; detection is annoying.
 (require 'whitespace)
-(setq whitespace-style '(lines-tail))
-(global-whitespace-mode)
+(setq whitespace-style '(face lines-tail))
+(global-whitespace-mode 1)
 
 (setq browse-url-browser-function 'browse-url-generic
       browse-url-generic-program (getenv "BROWSER"))

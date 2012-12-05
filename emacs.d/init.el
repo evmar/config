@@ -101,7 +101,6 @@
 
 (require 'google-c-style)
 (add-hook 'c-mode-common-hook 'google-set-c-style)
-(add-to-list 'auto-mode-alist '("^BUILD$" . python-mode))
 
 ; Haskell ghci support.
 ;(require 'inf-haskell)
@@ -215,6 +214,8 @@
 ;(require 'pymacs)
 ;(pymacs-load "ropemacs" "rope-")
 (add-to-list 'auto-mode-alist '("\\.mm$" . c++-mode))
+
+(load "local" t t)
 
 (defun ami-summarize-indentation-at-point ()
   "Echo a summary of how one gets from the left-most column to

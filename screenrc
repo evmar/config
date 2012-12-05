@@ -20,6 +20,8 @@ hardstatus on
 
 defscrollback 4000
 
+maptimeout 0
+
 # don't kill window after the process died
 # zombie "^["
 

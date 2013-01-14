@@ -53,9 +53,6 @@
 
 (require 'devhelp)
 
-; start emacs server
-(server-start)
-
 ; interactive buffer switch and file load
 (require 'ido)
 (ido-mode t)

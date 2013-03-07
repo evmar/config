@@ -18,8 +18,7 @@
  c-basic-offset 2
  python-indent 4
 
- show-trailing-whitespace t
- require-final-newline t  ; will this break stuff?
+ require-final-newline t
 
  ; middle-click should paste at the point, not where I clicked.
  mouse-yank-at-point t
@@ -118,7 +117,7 @@
 ;; make the compile window stick at 12 lines tall
 (setq compilation-window-height 12)
 ;; always scroll
-(setq compilation-scroll-output t)
+(setq compilation-scroll-output 'first-error)
 ;; If the compilation has a zero exit code, the windows disappears
 ;; after two seconds.
 (setq compilation-finish-functions
@@ -237,3 +236,22 @@
                 (setq cur-indent (1+ cur-indent)))))
         (forward-line -1))
       (message "%s" (mapconcat 'identity trace "\n")))))
+
+; It's ok to run M-x erase-buffer.
+(put 'erase-buffer 'disabled nil)
+
+; Trim initial/trailing whitespace from a string.
+(defun trim (s)
+  (replace-regexp-in-string "\n*$" "" s))
+
+; Command+key to run the line under the cursor as a shell command.
+(defun shell-line ()
+  "execute region as shell command"
+  (interactive)
+  (let* ((bds (bounds-of-thing-at-point 'line))
+         (line (trim (buffer-substring-no-properties (car bds) (cdr bds)))))
+    (shell-command (concat line " &"))))
+(global-set-key (kbd "M-@") 'shell-line)
+
+; Don't highlight random words in shell buffers.
+(set-variable 'shell-font-lock-keywords nil)

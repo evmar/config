@@ -2,9 +2,6 @@ Host *
   ControlMaster auto
   ControlPath ~/.ssh/cm/%r@%h:%p
 
-Host evmar
-  HostName 172.31.135.200
-
 Host trout
   HostName trout.local
   User martine

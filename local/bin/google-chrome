@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Run google-chrome with the same arguments, but filter out console spam.
+
+/usr/bin/google-chrome "$@" 2>&1 | \
+  egrep -v "org.chromium.Mtpd|ApplyCaretVisibility"
+

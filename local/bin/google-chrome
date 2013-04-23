@@ -1,7 +1,11 @@
 #!/bin/bash
+#
+# This script runs google-chrome with the same arguments,
+# but filters out console spam.
 
-# Run google-chrome with the same arguments, but filter out console spam.
+# Disable accelerated compositing, as it kills subpixel rendering.
+EXTRA_FLAGS=--blacklist-accelerated-compositing
 
-/usr/bin/google-chrome "$@" 2>&1 | \
+/usr/bin/google-chrome $EXTRA_FLAGS "$@" 2>&1 | \
   egrep -v "org.chromium.Mtpd|ApplyCaretVisibility"
 

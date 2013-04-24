@@ -45,20 +45,6 @@
 ; disable scroll bars
 (scroll-bar-mode -1)
 
-; evil mode
-(add-to-list 'load-path "~/.emacs.d/evil")
-(require 'evil)
-(evil-mode 1)
-(add-to-list 'evil-emacs-state-modes 'grep-mode 'erc-mode)
-
-(require 'devhelp)
-
-; interactive buffer switch and file load
-(require 'ido)
-(ido-mode t)
-; allow ido to read large directories
-(setq ido-max-directory-size 100000)
-
 ; Don't require me to type out "yes".
 (fset 'yes-or-no-p 'y-or-n-p)
 
@@ -73,6 +59,8 @@
  '(erc-nick "evmar")
  '(erc-server "irc.oftc.net")
  '(erc-user-full-name "Evan Martin")
+ '(evil-shift-width 2)
+ '(evil-want-C-i-jump nil)
  '(haskell-program-name "ghci")
  '(ido-enable-tramp-completion nil)
  '(js-indent-level 2)
@@ -94,6 +82,20 @@
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
  '(whitespace-line ((t (:underline "red")))))
+
+; evil mode
+(add-to-list 'load-path "~/.emacs.d/evil")
+(require 'evil)
+(evil-mode 1)
+(add-to-list 'evil-emacs-state-modes 'grep-mode 'erc-mode)
+
+(require 'devhelp)
+
+; interactive buffer switch and file load
+(require 'ido)
+(ido-mode t)
+; allow ido to read large directories
+(setq ido-max-directory-size 100000)
 
 (require 'google-c-style)
 (add-hook 'c-mode-common-hook 'google-set-c-style)
@@ -120,11 +122,8 @@
 (setq compilation-finish-functions
       (lambda (buf str)
         (unless (string-match "exited abnormally" str)
-          ;; No errors, make the compilation window go away in a few seconds.
-          (run-at-time
-           "2 sec" nil 'delete-windows-on
-           (get-buffer-create "*compilation*"))
-          (message "No Compilation Errors!"))))
+          (delete-windows-on buf)
+          (message "compile succeeded"))))
 
 ; Timestamp function.
 (defun timestamp ()
@@ -136,7 +135,8 @@
   "Set up a post for lazyblog."
   (interactive)
   (insert "Timestamp: ") (timestamp) (insert "\n")
-  (insert "Subject: "))
+  (insert "Subject: \n")
+  (insert "Summary: \n"))
 
 ; Markdown
 (autoload 'markdown-mode "markdown-mode.el"
@@ -258,5 +258,21 @@
     (shell-command (concat line " &"))))
 (global-set-key (kbd "M-@") 'shell-line)
 
+(if (file-exists-p "~/.emacs.d/el-get")
+    (progn
+      (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+      (require 'el-get)
+      (el-get 'sync)))
+
+(defun create-scratch-buffer nil
+  "create a scratch buffer"
+  (interactive)
+  (switch-to-buffer (get-buffer-create "*scratch*"))
+  (lisp-interaction-mode))
+
 ; Don't highlight random words in shell buffers.
 (set-variable 'shell-font-lock-keywords nil)
+; disable weird shell highlighting of strings starting with "-"
+(setq shell-font-lock-keywords nil)
+(setq comint-scroll-to-bottom-on-input t)
+(setq comint-prompt-read-only t)

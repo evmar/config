@@ -6,6 +6,6 @@
 # Disable accelerated compositing, as it kills subpixel rendering.
 EXTRA_FLAGS=--blacklist-accelerated-compositing
 
-/usr/bin/google-chrome $EXTRA_FLAGS "$@" 2>&1 | \
+exec /usr/bin/google-chrome $EXTRA_FLAGS "$@" 2>&1 | \
   egrep -v "org.chromium.Mtpd|ApplyCaretVisibility"
 

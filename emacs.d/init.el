@@ -276,3 +276,18 @@
 (setq shell-font-lock-keywords nil)
 (setq comint-scroll-to-bottom-on-input t)
 (setq comint-prompt-read-only t)
+
+(defface paren-face
+  '((((class color))
+     (:foreground "dark gray")))
+  "Face for parens in lisp"
+  :group 'faces)
+
+(add-hook 'scheme-mode-hook
+          (lambda ()
+            (font-lock-add-keywords nil
+                                    '(("(\\|)" . 'paren-face)))))
+(add-hook 'emacs-lisp-mode-hook
+          (lambda ()
+            (font-lock-add-keywords nil
+                                    '(("(\\|)" . 'paren-face)))))

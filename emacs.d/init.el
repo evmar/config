@@ -277,8 +277,6 @@
 
 ; Don't highlight random words in shell buffers.
 (set-variable 'shell-font-lock-keywords nil)
-; disable weird shell highlighting of strings starting with "-"
-(setq shell-font-lock-keywords nil)
 (setq comint-scroll-to-bottom-on-input t)
 (setq comint-prompt-read-only t)
 
@@ -315,3 +313,5 @@
       (add-to-list 'load-path "~/projects/src/rust/src/etc/emacs")
       (require 'rust-mode)))
 
+(require 'yaml-mode)
+(add-to-list 'auto-mode-alist '("\\.ya?ml$" . yaml-mode))

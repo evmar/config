@@ -277,17 +277,36 @@
 (setq comint-scroll-to-bottom-on-input t)
 (setq comint-prompt-read-only t)
 
+(require 'paredit)
+
 (defface paren-face
   '((((class color))
      (:foreground "dark gray")))
   "Face for parens in lisp"
   :group 'faces)
 
+(defun add-match-indent ()
+  (put 'match 'scheme-indent-function 1)
+  (put 'match-let 'scheme-indent-function 0))
+
 (add-hook 'scheme-mode-hook
           (lambda ()
             (font-lock-add-keywords nil
-                                    '(("(\\|)" . 'paren-face)))))
+                                    '(("(\\|)" . 'paren-face)))
+            (add-match-indent)))
+
 (add-hook 'emacs-lisp-mode-hook
           (lambda ()
             (font-lock-add-keywords nil
                                     '(("(\\|)" . 'paren-face)))))
+
+(add-hook 'lpaca-mode-hook
+          (lambda ()
+            (font-lock-add-keywords nil
+                                    '(("(\\|)" . 'paren-face)))))
+
+(if (file-exists-p "~/projects/src/rust/src/etc/emacs")
+    (progn
+      (add-to-list 'load-path "~/projects/src/rust/src/etc/emacs")
+      (require 'rust-mode)))
+

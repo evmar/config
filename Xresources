@@ -20,3 +20,9 @@ URxvt.saveLines: 10000
 URxvt.scrollTtyOutput: False
 URxvt.scrollWithBuffer: False
 URxvt.scrollTtyKeypress: True
+
+Xft.dpi:        96
+Xft.antialias:  true
+Xft.rgba:       rgb
+Xft.hinting:    true
+Xft.hintstyle:  hintnone

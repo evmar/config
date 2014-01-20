@@ -15,3 +15,6 @@ Host mouse
 
 Host nfs
   HostName ssh.phx.nearlyfreespeech.net
+
+Host d
+  HostName d.neugierig.org

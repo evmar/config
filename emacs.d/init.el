@@ -17,6 +17,7 @@
  standard-indent 2
  c-basic-offset 2
  python-indent 4
+ css-indent-offset 2
 
  require-final-newline t
 

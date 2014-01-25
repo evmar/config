@@ -7,6 +7,7 @@ Host trout
   User martine
 
 Host kitten
+  HostName kitten.local
   User evmar
 
 Host mouse
@@ -15,3 +16,9 @@ Host mouse
 
 Host nfs
   HostName ssh.phx.nearlyfreespeech.net
+
+Host d
+  User evmar
+  HostName d.neugierig.org
+  # This prevents the ssh client from attempting to reverse the DNS.
+  GSSAPIKeyExchange no

@@ -18,6 +18,7 @@
  c-basic-offset 2
  css-indent-offset 2
  python-indent 4
+ css-indent-offset 2
 
  require-final-newline t
 
@@ -210,7 +211,7 @@
 
 (require 'protobuf-mode)
 
-(if (file-exists-p "~/.emacs.d/rust/rust.el")
+(if (file-exists-p "~/.emacs.d/rust/rust-mode.el")
     (progn
       (add-to-list 'load-path "~/.emacs.d/rust")
       (require 'rust-mode)))

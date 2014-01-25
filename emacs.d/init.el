@@ -16,6 +16,7 @@
  indent-tabs-mode nil
  standard-indent 2
  c-basic-offset 2
+ css-indent-offset 2
  python-indent 4
 
  require-final-newline t
@@ -191,6 +192,9 @@
 (require 'git-grep)
 
 (require 'go-mode-load)
+(add-hook 'go-mode-hook (lambda ()
+                          (set-variable 'tab-width 4 t)))
+
 
 (require 'coffee-mode)
 

@@ -14,3 +14,5 @@
 	statusHints = false
 [receive]
 	denyCurrentBranch = warn
+[github]
+	user = martine

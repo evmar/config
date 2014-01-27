@@ -258,9 +258,11 @@
 (defun shell-line ()
   "execute region as shell command"
   (interactive)
-  (let* ((bds (bounds-of-thing-at-point 'line))
+  (let* ((buf "*shell command*")
+         (bds (bounds-of-thing-at-point 'line))
          (line (trim (buffer-substring-no-properties (car bds) (cdr bds)))))
-    (shell-command (concat line " &"))))
+    (if (get-buffer buf) (kill-buffer buf))
+    (shell-command line buf)))
 (global-set-key (kbd "M-@") 'shell-line)
 
 (if (file-exists-p "~/.emacs.d/el-get")

@@ -2,6 +2,7 @@
 
 from optparse import OptionParser
 import fileinput
+import os
 
 parser = OptionParser()
 parser.add_option('-k', dest='field', type='int', default=1,
@@ -17,12 +18,13 @@ for line in fileinput.input(args):
     hist.append((line_without_num, int(fields[opts.field])))
 
 max_text_len = max(len(text) for text, _ in hist)
-max_count = max(count for _, count in hist)
+total = sum(count for _, count in hist)
 
-cols = 78
+cols = 130
 cols_for_hist = cols - max_text_len - 1
 
 for text, count in hist:
     print text + (' ' * (max_text_len - len(text))),
-    print '#' * int(round(count * cols_for_hist / float(max_count)))
-
+    frac = count / float(total)
+    print '%.1f%%' % (100 * frac),
+    print '#' * int(round(frac * cols_for_hist))

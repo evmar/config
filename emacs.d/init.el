@@ -66,10 +66,6 @@
  '(haskell-program-name "ghci")
  '(ido-enable-tramp-completion nil)
  '(js-indent-level 2)
- '(js2-auto-indent-flag nil)
- '(js2-electric-keys (quote nil))
- '(js2-mirror-mode nil)
- '(js2-mode-escape-quotes nil)
  '(org-agenda-files (quote ("~/everything.org")))
  '(paragraph-separate "[ 	]*$\\|-[ ]")
  '(paragraph-start "\\|[ 	]*$\\\\|-[ ]")
@@ -201,9 +197,6 @@
 
 (require 'ninja-mode)
 
-(require 'js)
-(add-to-list 'auto-mode-alist '("\\.js$" . js-mode))
-
 (if (file-exists-p "~/.emacs.d/magit/50magit.el")
     (progn
       (add-to-list 'load-path "~/.emacs.d/magit")
@@ -264,12 +257,6 @@
     (if (get-buffer buf) (kill-buffer buf))
     (shell-command line buf)))
 (global-set-key (kbd "M-@") 'shell-line)
-
-(if (file-exists-p "~/.emacs.d/el-get")
-    (progn
-      (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
-      (require 'el-get)
-      (el-get 'sync)))
 
 (defun create-scratch-buffer nil
   "create a scratch buffer"

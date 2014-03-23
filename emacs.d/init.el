@@ -303,3 +303,6 @@
 
 (require 'yaml-mode)
 (add-to-list 'auto-mode-alist '("\\.ya?ml$" . yaml-mode))
+
+(require 'yasnippet)
+(add-hook 'go-mode-hook '(lambda () (yas-minor-mode)))

@@ -306,3 +306,8 @@
 
 (require 'yasnippet)
 (add-hook 'go-mode-hook '(lambda () (yas-minor-mode)))
+
+(require 'web-mode)
+(setq web-mode-script-padding 0)
+(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode))

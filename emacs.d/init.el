@@ -163,7 +163,6 @@
   "compile itself if ~/.emacs/init.el"
   (interactive)
   (require 'bytecomp)
-  (print (buffer-file-name))
   (if (or (string= (buffer-file-name) (expand-file-name "~/.emacs.d/init.el"))
           (string= (buffer-file-name) (expand-file-name "~/projects/config/emacs.d/init.el")))
       (byte-compile-file (buffer-file-name))))

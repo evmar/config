@@ -20,5 +20,3 @@ Host nfs
 Host d
   User evmar
   HostName d.neugierig.org
-  # This prevents the ssh client from attempting to reverse the DNS.
-  GSSAPIKeyExchange no

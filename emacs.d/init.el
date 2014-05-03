@@ -190,7 +190,8 @@
 (require 'go-mode-load)
 (add-hook 'go-mode-hook (lambda ()
                           (set-variable 'tab-width 4 t)))
-
+(setq gofmt-command "goimports")
+(add-hook 'before-save-hook 'gofmt-before-save)
 
 (require 'coffee-mode)
 

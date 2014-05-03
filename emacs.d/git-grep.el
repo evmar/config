@@ -24,7 +24,6 @@
 (defun git-grep ()
   (interactive)
   (let ((default-directory (chomp (shell-command-to-string "cd `git rev-parse --show-toplevel`; pwd"))))
-    (message default-directory)
     (call-interactively 'rgrep)))
 
 (global-set-key [f3] 'git-grep)

@@ -204,10 +204,7 @@
 
 (require 'protobuf-mode)
 
-(if (file-exists-p "~/.emacs.d/rust/rust-mode.el")
-    (progn
-      (add-to-list 'load-path "~/.emacs.d/rust")
-      (require 'rust-mode)))
+(require 'rust-mode)
 
 ;(require 'pymacs)
 ;(pymacs-load "ropemacs" "rope-")

@@ -312,3 +312,48 @@
 (require 'popwin)
 (popwin-mode 1)
 (global-set-key (kbd "C-p") popwin:keymap)
+
+;; custom mode line, based on
+;; http://amitp.blogspot.com/2011/08/emacs-custom-mode-line.html
+(defun shorten-directory (dir max-length)
+  "Show up to `max-length' characters of a directory name `dir'."
+  (let ((path (reverse (split-string (abbreviate-file-name dir) "/")))
+        (output ""))
+    (when (and path (equal "" (car path)))
+      (setq path (cdr path)))
+    (while (and path (< (length output) (- max-length 4)))
+      (setq output (concat (car path) "/" output))
+      (setq path (cdr path)))
+    (when path
+      (setq output (concat ".../" output)))
+    output))
+
+(setq-default
+ mode-line-format
+ '(
+   ;; line/col
+   "%4l:%2c  "
+
+   ;; dir + file name
+   (:propertize (:eval (shorten-directory default-directory 30))
+                face mode-line-directory-face)
+   (:propertize "%b"
+                face mode-line-filename-face)
+
+   ;; mod state
+   (:eval (when (buffer-modified-p) "*"))
+
+   "  "
+
+   (vc-mode vc-mode)
+
+   ;; major mode
+   "[%m]"))
+
+(make-face 'mode-line-directory-face)
+(set-face-attribute 'mode-line-directory-face nil
+                    :foreground "gray20")
+
+(make-face 'mode-line-filename-face)
+(set-face-attribute 'mode-line-filename-face nil
+                    :weight 'bold)

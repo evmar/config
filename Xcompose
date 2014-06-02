@@ -1,0 +1,5 @@
+# Use the current locale's compose as a base.
+# See e.g. /usr/share/X11/locale/en_US.UTF-8/Compose
+include "%L"
+
+<Multi_key> <g> <a>    : "α"   U03B1    # GREEK SMALL LETTER ALPHA

@@ -111,17 +111,14 @@
 ;; this means hitting the compile button always saves the buffer
 ;; having to separately hit C-x C-s is a waste of time
 (setq mode-compile-always-save-buffer-p t)
-;; make the compile window stick at 12 lines tall
-(setq compilation-window-height 12)
-;; always scroll
 (setq compilation-scroll-output 'first-error)
-;; If the compilation has a zero exit code, the windows disappears
+;; If the compilation has a zero exit code, the window disappears
 ;; after two seconds.
-(setq compilation-finish-functions
-      (lambda (buf str)
-        (unless (string-match "exited abnormally" str)
-          (delete-windows-on buf)
-          (message "compile succeeded"))))
+;; (setq compilation-finish-functions
+;;       (lambda (buf str)
+;;         (unless (string-match "exited abnormally" str)
+;;           (delete-windows-on buf)
+;;           (message "compile succeeded"))))
 
 ; Timestamp function.
 (defun timestamp ()
@@ -310,3 +307,8 @@
 (setq web-mode-script-padding 0)
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode))
+
+;; popwin hides popup windows like compilation/help automatically.
+(require 'popwin)
+(popwin-mode 1)
+(global-set-key (kbd "C-p") popwin:keymap)

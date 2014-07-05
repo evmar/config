@@ -139,6 +139,7 @@
 (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.text$" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
 
 ; Javascript
 (require 'js)
@@ -358,3 +359,5 @@
 (make-face 'mode-line-filename-face)
 (set-face-attribute 'mode-line-filename-face nil
                     :weight 'bold)
+
+(require 'sql)

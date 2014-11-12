@@ -369,3 +369,4 @@
 
 (require 'sql)
 (require 'toml-mode)
+(require 'uniquify)

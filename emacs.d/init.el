@@ -30,6 +30,13 @@
 
  ; use normal monospace font
  font-use-system-font t
+
+ ; I don't use clipboard managers
+ x-select-enable-clipboard-manager nil
+ ;; select-active-regions
+ ;; mouse-drag-copy-region
+ ;; x-select-enable-clipboard t
+ ;; x-select-enable-primary t
 )
 
 ; no menu bar on console mode
@@ -251,7 +258,7 @@
          (bds (bounds-of-thing-at-point 'line))
          (line (trim (buffer-substring-no-properties (car bds) (cdr bds)))))
     (if (get-buffer buf) (kill-buffer buf))
-    (shell-command line buf)))
+    (async-shell-command line buf)))
 (global-set-key (kbd "M-@") 'shell-line)
 
 (defun create-scratch-buffer nil

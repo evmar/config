@@ -2,12 +2,8 @@ Host *
   ControlMaster auto
   ControlPath ~/.ssh/cm/%r@%h:%p
 
-Host trout
-  HostName trout.local
-  User martine
-
 Host kitten
-  HostName kitten.local
+  HostName kitten.lan
   User evmar
 
 Host mouse

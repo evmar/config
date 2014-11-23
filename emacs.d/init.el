@@ -361,3 +361,4 @@
                     :weight 'bold)
 
 (require 'sql)
+(require 'toml-mode)

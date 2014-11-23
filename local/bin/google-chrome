@@ -4,6 +4,7 @@
 # but filters out console spam.
 
 EXTRA_FLAGS=
+unset AUTO_PROXY
 
 exec /usr/bin/google-chrome $EXTRA_FLAGS "$@" 2>&1 | \
   egrep -v "Bad pickle of FormData|SANDBOXED|AudioManagerBase::GetDefaultOutputDeviceID|Invalid entry with unique id|RawChannel fatal error|recvmsg: Connection reset"

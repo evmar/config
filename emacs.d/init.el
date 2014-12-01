@@ -370,3 +370,7 @@
 (require 'sql)
 (require 'toml-mode)
 (require 'uniquify)
+
+;; Scroll window under mouse wheel one line at a time.
+(setq mouse-wheel-follow-mouse 't)
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))

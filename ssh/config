@@ -16,3 +16,6 @@ Host nfs
 Host d
   User evmar
   HostName d.neugierig.org
+
+Host openwrt
+  User root

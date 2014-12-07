@@ -2,6 +2,9 @@
 
 ;; Author: Vegard Øye <vegard_oye at hotmail.com>
 ;; Maintainer: Vegard Øye <vegard_oye at hotmail.com>
+
+;; Version: 1.0.9
+
 ;;
 ;; This file is NOT part of GNU Emacs.
 
@@ -72,7 +75,7 @@ If the end position is at the beginning of a line, then:
                  (cond
                   ((progn
                      (goto-char beg)
-                     (looking-back "^[ \f\t\v]*"))
+                     (looking-back "^[ \f\t\v]*" (line-beginning-position)))
                    (evil-expand beg end 'line))
                   (t
                    (unless evil-cross-lines
@@ -273,7 +276,10 @@ directly."
 
 (evil-define-interactive-code "<C>"
   "Character read through `evil-read-key'."
-  (list (evil-read-key)))
+  (list
+   (if (evil-operator-state-p)
+       (evil-without-restriction (evil-read-key))
+     (evil-read-key))))
 
 (evil-define-interactive-code "<r>"
   "Untyped motion range (BEG END)."
@@ -332,6 +338,17 @@ If visual state is inactive then those values are nil."
   (list (when (and (evil-ex-p) evil-ex-argument)
           (intern evil-ex-argument))))
 
+(evil-define-interactive-code "<addr>"
+  "Ex line number."
+  (list
+   (and (evil-ex-p)
+        (let ((expr (evil-ex-parse  evil-ex-argument)))
+          (if (eq (car expr) 'evil-goto-line)
+              (save-excursion
+                (goto-char evil-ex-point)
+                (eval (cadr expr)))
+            (user-error "Invalid address"))))))
+
 (evil-define-interactive-code "<!>"
   "Ex bang argument."
   :ex-bang t
@@ -351,7 +368,7 @@ If visual state is inactive then those values are nil."
   "Ex substitution argument."
   :ex-arg substitution
   (when (evil-ex-p)
-    (evil-ex-get-substitute-info evil-ex-argument)))
+    (evil-ex-get-substitute-info evil-ex-argument t)))
 
 (provide 'evil-types)
 

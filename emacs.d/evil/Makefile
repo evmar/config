@@ -1,7 +1,7 @@
 SHELL = /bin/sh
 EMACS = emacs
 FILES = $(filter-out evil-tests.el,$(filter-out evil-pkg.el,$(wildcard evil*.el)))
-VERSION := $(shell sed -n '3s/.*"\(.*\)".*/\1/p' evil-pkg.el)
+VERSION := $(shell sed -ne '/define-package/,$$p' evil-pkg.el | sed -ne '/^\s*"[[:digit:]]\+\(\.[[:digit:]]\+\)*"\s*$$/ s/^.*"\(.*\)".*$$/\1/p')
 ELPAPKG = evil-$(VERSION)
 PROFILER =
 DOC = doc
@@ -34,7 +34,9 @@ compile-batch: clean
 	$(EMACS) --batch -Q -L . $(LIBS) -f batch-byte-compile ${FILES}
 
 # Documentation.
-info: clean pdf
+doc: info pdf
+
+info: clean
 	cd $(DOC) && makeinfo evil.texi
 
 pdf: clean
@@ -53,14 +55,14 @@ clean:
 #       make test TAG=repeat
 # This will only run tests pertaining to the repeat system.
 test:
-	$(EMACS) --batch -Q -L . $(LIBS) -l evil-tests.el \
+	$(EMACS) -nw -Q -L . $(LIBS) -l evil-tests.el \
 --eval "(evil-tests-initialize '(${TAG}) '(${PROFILER}))"
 
 # Byte-compile Evil and run all tests.
 tests: compile
-	$(EMACS) --batch -Q -L . $(LIBS) -l evil-tests.el \
+	$(EMACS) -nw -Q -L . $(LIBS) -l evil-tests.el \
 --eval "(evil-tests-initialize '(${TAG}) '(${PROFILER}))"
-	rm -f *.elc
+	rm -f *.elc .depend
 
 # Load Evil in a fresh instance of Emacs and run all tests.
 emacs:
@@ -104,11 +106,30 @@ elpa:
 	@echo "Creating ELPA package $(ELPAPKG).tar"
 	@rm -rf ${ELPAPKG}
 	@mkdir ${ELPAPKG}
-	@cp $(FILES) evil-pkg.el ${ELPAPKG}
+	@cp $(FILES) COPYING evil-pkg.el ${ELPAPKG}
 	@tar cf ${ELPAPKG}.tar ${ELPAPKG}
 	@rm -rf ${ELPAPKG}
 
 # Change the version using make VERSION=x.y.z
 version:
-	cat evil-pkg.el | sed "3s/\".*\"/\"${VERSION}\"/" > evil-pkg.el.new && mv evil-pkg.el.new evil-pkg.el
+	$(EMACS) --batch --eval '(setq vc-handled-backends nil)' ${FILES} evil-tests.el -Q \
+--eval "\
+(progn \
+  (find-file \"evil-vars.el\") \
+  (when (re-search-forward \"^(defconst evil-version \\\"\\\\([-_.[:word:]]*\\\\)\\\"\" nil t) \
+    (replace-match \"${VERSION}\" t t nil 1)) \
+  (find-file \"evil-pkg.el\") \
+  (goto-line 3) \
+  (when (and (string-match-p \"[[:digit:]]+\\.[[:digit:]]+\\.[[:digit:]]+\" \"${VERSION}\") \
+             (re-search-forward \"\\\"\\\\([-_.[:word:]]*\\\\)\\\"\" nil t)) \
+    (replace-match \"${VERSION}\" t t nil 1)) \
+  (dolist (buffer (reverse (buffer-list))) \
+    (when (buffer-file-name buffer) \
+      (set-buffer buffer) \
+      (goto-char (point-min)) \
+      (when (re-search-forward \"^;;[[:space:]]*Version:[[:space:]]*\\\\([-_.[:word:]]*\\\\)\" nil t) \
+        (replace-match \"${VERSION}\" t t nil 1)) \
+      (when (buffer-modified-p) (save-buffer 0))))) \
+"
+
 

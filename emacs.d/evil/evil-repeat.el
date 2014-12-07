@@ -2,6 +2,9 @@
 
 ;; Author: Frank Fischer <frank.fischer at mathematik.tu-chemnitz.de>
 ;; Maintainer: Vegard Øye <vegard_oye at hotmail.com>
+
+;; Version: 1.0.9
+
 ;;
 ;; This file is NOT part of GNU Emacs.
 
@@ -131,6 +134,14 @@
 (declare-function evil-visual-char "evil-visual")
 (declare-function evil-visual-line "evil-visual")
 (declare-function evil-visual-block "evil-visual")
+
+(defmacro evil-without-repeat (&rest body)
+  (declare (indent defun)
+           (debug t))
+  `(let ((pre-command-hook (remq 'evil-repeat-pre-hook pre-command-hook))
+         (post-command-hook (remq 'evil-repeat-post-hook post-command-hook)))
+     ,@body
+     (evil-repeat-abort)))
 
 (defsubst evil-repeat-recording-p ()
   "Returns non-nil iff a recording is in progress."
@@ -314,6 +325,9 @@ invoked the current command"
   "Repeation recording function for commands that are repeated by keystrokes."
   (cond
    ((eq flag 'pre)
+    (when evil-this-register
+      (evil-repeat-record
+       `(set evil-this-register ,evil-this-register)))
     (setq evil-repeat-keys (this-command-keys)))
    ((eq flag 'post)
     (evil-repeat-record (if (zerop (length (this-command-keys)))
@@ -482,8 +496,19 @@ where point should be placed after all changes."
     (dolist (rep repeat-info)
       (cond
        ((or (arrayp rep) (stringp rep))
-        (execute-kbd-macro rep))
+        (let ((input-method current-input-method)
+              (evil-input-method nil))
+          (deactivate-input-method)
+          (unwind-protect
+              (execute-kbd-macro rep)
+            (activate-input-method input-method))))
        ((consp rep)
+        (when (and (= 3 (length rep))
+                   (eq (nth 0 rep) 'set)
+                   (eq (nth 1 rep) 'evil-this-register)
+                   (>= (nth 2 rep) ?0)
+                   (< (nth 2 rep) ?9))
+          (setcar (nthcdr 2 rep) (1+ (nth 2 rep))))
         (apply (car rep) (cdr rep)))
        (t
         (error "Unexpected repeat-info: %S" rep))))))
@@ -532,16 +557,18 @@ If SAVE-POINT is non-nil, do not move point."
     (save-excursion
       (evil-repeat count)))
    (t
-    (let ((confirm-kill-emacs t)
-          (kill-buffer-hook
-           (cons #'(lambda ()
-                     (error "Cannot delete buffer in repeat command"))
-                 kill-buffer-hook))
-          (undo-pointer buffer-undo-list))
-      (evil-with-single-undo
-        (setq evil-last-repeat (list (point) count undo-pointer))
-        (evil-execute-repeat-info-with-count
-         count (ring-ref evil-repeat-ring 0)))))))
+    (unwind-protect
+        (let ((confirm-kill-emacs t)
+              (kill-buffer-hook
+               (cons #'(lambda ()
+                         (user-error "Cannot delete buffer in repeat command"))
+                     kill-buffer-hook))
+              (undo-pointer buffer-undo-list))
+          (evil-with-single-undo
+            (setq evil-last-repeat (list (point) count undo-pointer))
+            (evil-execute-repeat-info-with-count
+             count (ring-ref evil-repeat-ring 0))))
+      (evil-normal-state)))))
 
 ;; TODO: the same issue concering disabled undos as for `evil-paste-pop'
 (evil-define-command evil-repeat-pop (count &optional save-point)
@@ -559,7 +586,7 @@ If COUNT is negative, this is a more recent kill."
   (cond
    ((not (and (eq last-command #'evil-repeat)
               evil-last-repeat))
-    (error "Previous command was not evil-repeat: %s" last-command))
+    (user-error "Previous command was not evil-repeat: %s" last-command))
    (save-point
     (save-excursion
       (evil-repeat-pop count)))

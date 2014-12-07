@@ -1,6 +1,9 @@
 ;;; evil-core.el --- Core functionality
 ;; Author: Vegard Øye <vegard_oye at hotmail.com>
 ;; Maintainer: Vegard Øye <vegard_oye at hotmail.com>
+
+;; Version: 1.0.9
+
 ;;
 ;; This file is NOT part of GNU Emacs.
 
@@ -102,6 +105,10 @@
 
 ;;; Code:
 
+(declare-function evil-emacs-state-p "evil-states")
+(declare-function evil-ex-p "evil-ex")
+(defvar evil-mode-buffers)
+
 (define-minor-mode evil-local-mode
   "Minor mode for setting up Evil in a single buffer."
   :init-value nil
@@ -115,26 +122,30 @@
     ;; restore the proper value of `major-mode' in Fundamental buffers
     (when (eq major-mode 'turn-on-evil-mode)
       (setq major-mode 'fundamental-mode))
-    ;; determine and enable the initial state
-    (unless evil-state
-      (evil-initialize-state)
-      ;; re-determine the initial state in `post-command-hook' since
-      ;; the major mode may not have been initialized yet
-      (add-hook 'post-command-hook #'evil-initialize-state t t))
-    (add-hook 'input-method-activate-hook #'evil-activate-input-method t t)
-    (add-hook 'input-method-inactivate-hook #'evil-inactivate-input-method t t)
-    (add-hook 'activate-mark-hook #'evil-visual-activate-hook nil t)
-    (add-hook 'pre-command-hook #'evil-repeat-pre-hook)
-    (add-hook 'pre-command-hook #'evil-jump-hook nil t)
-    (add-hook 'post-command-hook #'evil-repeat-post-hook)
-    (add-hook 'post-command-hook #'evil-refresh-cursor))
+    ;; The initial state is usually setup by `evil-initialize' when
+    ;; the major-mode in a buffer changes. This preliminary
+    ;; initialization is only for the case when `evil-local-mode' is
+    ;; called directly for the first time in a buffer.
+    (unless evil-state (evil-initialize-state))
+    (add-hook 'input-method-activate-hook 'evil-activate-input-method t t)
+    (add-hook 'input-method-deactivate-hook 'evil-deactivate-input-method t t)
+    (add-hook 'activate-mark-hook 'evil-visual-activate-hook nil t)
+    (add-hook 'pre-command-hook 'evil-repeat-pre-hook)
+    (add-hook 'pre-command-hook 'evil-jump-hook nil t)
+    (add-hook 'post-command-hook 'evil-repeat-post-hook)
+    (add-hook 'post-command-hook 'evil-refresh-cursor))
    (t
     (evil-refresh-mode-line)
-    (remove-hook 'pre-command-hook #'evil-jump-hook t)
-    (remove-hook 'activate-mark-hook #'evil-visual-activate-hook t)
-    (remove-hook 'input-method-activate-hook #'evil-activate-input-method t)
-    (remove-hook 'input-method-inactivate-hook #'evil-inactivate-input-method t)
+    (remove-hook 'pre-command-hook 'evil-jump-hook t)
+    (remove-hook 'activate-mark-hook 'evil-visual-activate-hook t)
+    (remove-hook 'input-method-activate-hook 'evil-activate-input-method t)
+    (remove-hook 'input-method-deactivate-hook 'evil-deactivate-input-method t)
     (evil-change-state nil))))
+
+;; Make the variable permanent local.  This is particular useful in
+;; conjunction with nXhtml/mumamo because mumamo does not touch these
+;; variables.
+(put 'evil-local-mode 'permanent-local t)
 
 (defun turn-on-evil-mode (&optional arg)
   "Turn on Evil in the current buffer."
@@ -146,16 +157,19 @@
   (interactive)
   (evil-local-mode (or arg -1)))
 
+;; The function `evil-initialize' should only be used to initialize
+;; `evil-local-mode' from the globalized minor-mode `evil-mode'. It is
+;; called whenever evil is enabled in a buffer for the first time or
+;; when evil is active and the major-mode of the buffer changes. In
+;; addition to enabling `evil-local-mode' it also sets the initial
+;; evil-state according to the major-mode.
 (defun evil-initialize ()
   "Enable Evil in the current buffer, if appropriate.
 To enable Evil globally, do (evil-mode 1)."
   ;; TODO: option for enabling vi keys in the minibuffer
   (unless (minibufferp)
-    (evil-local-mode 1)))
-
-;;;###autoload (autoload 'evil-mode "evil" "Toggle evil in all buffers" t)
-(define-globalized-minor-mode evil-mode
-  evil-local-mode evil-initialize)
+    (evil-local-mode 1)
+    (evil-initialize-state)))
 
 ;; No hooks are run in Fundamental buffers, so other measures are
 ;; necessary to initialize Evil in these buffers. When Evil is
@@ -168,19 +182,17 @@ To enable Evil globally, do (evil-mode 1)."
   "Enable Evil in Fundamental mode."
   (if evil-mode
       (progn
-        ;; changed back by `evil-local-mode'
-        (setq-default major-mode 'turn-on-evil-mode)
+        (when (eq (default-value 'major-mode) 'fundamental-mode)
+          ;; changed back by `evil-local-mode'
+          (setq-default major-mode 'turn-on-evil-mode))
         (ad-enable-regexp "^evil")
-        (ad-activate-regexp "^evil"))
-    (setq-default major-mode 'fundamental-mode)
+        (ad-activate-regexp "^evil")
+        (with-no-warnings (evil-esc-mode 1)))
+    (when (eq (default-value 'major-mode) 'turn-on-evil-mode)
+      (setq-default major-mode 'fundamental-mode))
     (ad-disable-regexp "^evil")
-    (ad-update-regexp "^evil")))
-
-(put 'evil-mode 'function-documentation
-     "Toggle Evil in all buffers.
-Enable with positive ARG and disable with negative ARG.
-See `evil-local-mode' to toggle Evil in the
-current buffer only.")
+    (ad-update-regexp "^evil")
+    (with-no-warnings (evil-esc-mode -1))))
 
 (defun evil-change-state (state &optional message)
   "Change the state to STATE.
@@ -199,10 +211,13 @@ If STATE is nil, disable all states."
           (evil-previous-state-alist (copy-tree evil-previous-state-alist))
           (evil-next-state evil-next-state)
           (old-state evil-state)
-          (inhibit-quit t))
+          (inhibit-quit t)
+          (buf (current-buffer)))
      (unwind-protect
          (progn ,@body)
-       (evil-change-state old-state))))
+       (when (buffer-live-p buf)
+         (with-current-buffer buf
+           (evil-change-state old-state))))))
 
 (defmacro evil-with-state (state &rest body)
   "Change to STATE and execute BODY without refreshing the display.
@@ -216,8 +231,7 @@ Restore the previous state afterwards."
 
 (defun evil-initializing-p (&optional buffer)
   "Whether Evil is in the process of being initialized."
-  (with-current-buffer (or buffer (current-buffer))
-    (memq #'evil-initialize-state post-command-hook)))
+  (memq (or buffer (current-buffer)) evil-mode-buffers))
 
 (defun evil-initialize-state (&optional state buffer)
   "Set up the initial state for BUFFER.
@@ -225,7 +239,6 @@ BUFFER defaults to the current buffer.
 Uses STATE if specified, or calls `evil-initial-state-for-buffer'.
 See also `evil-set-initial-state'."
   (with-current-buffer (or buffer (current-buffer))
-    (remove-hook 'post-command-hook #'evil-initialize-state t)
     (if state (evil-change-state state)
       (evil-change-to-initial-state buffer))))
 (put 'evil-initialize-state 'permanent-local-hook t)
@@ -289,13 +302,15 @@ This is the state the buffer comes up in."
 (evil-define-command evil-change-to-initial-state
   (&optional buffer message)
   "Change the state of BUFFER to its initial state.
-This is the state the buffer came up in."
+This is the state the buffer came up in. If Evil is not activated
+then this function does nothing."
   :keep-visual t
   :suppress-operator t
   (with-current-buffer (or buffer (current-buffer))
-    (evil-change-state (evil-initial-state-for-buffer
-                        buffer (or evil-default-state 'normal))
-                       message)))
+    (when evil-local-mode
+      (evil-change-state (evil-initial-state-for-buffer
+                          buffer (or evil-default-state 'normal))
+                         message))))
 
 (evil-define-command evil-change-to-previous-state
   (&optional buffer message)
@@ -318,7 +333,7 @@ This is the state the buffer came up in."
 ;; run. This is appropriate since many buffers are used for throwaway
 ;; purposes. Passing the buffer to `display-buffer' indicates
 ;; otherwise, though, so advise this function to initialize Evil.
-(defadvice display-buffer (before evil activate)
+(defadvice display-buffer (before evil)
   "Initialize Evil in the displayed buffer."
   (when evil-mode
     (when (get-buffer (ad-get-arg 0))
@@ -326,7 +341,7 @@ This is the state the buffer came up in."
         (unless evil-local-mode
           (evil-local-mode 1))))))
 
-(defadvice switch-to-buffer (before evil activate)
+(defadvice switch-to-buffer (before evil)
   "Initialize Evil in the displayed buffer."
   (when evil-mode
     (let* ((arg0 (ad-get-arg 0))
@@ -336,62 +351,88 @@ This is the state the buffer came up in."
           (unless evil-local-mode
             (evil-local-mode 1)))))))
 
+(defun evil-generate-mode-line-tag (&optional state)
+  "Generate the evil mode-line tag for STATE."
+  (let ((tag (evil-state-property state :tag t)))
+    ;; prepare mode-line: add tooltip
+    (if (stringp tag)
+        (propertize tag
+                    'help-echo (evil-state-property state :name)
+                    'mouse-face 'mode-line-highlight)
+      tag)))
+
 (defun evil-refresh-mode-line (&optional state)
   "Refresh mode line tag."
-  (let (name next string temp)
-    (setq string (evil-state-property state :tag t)
-          name (evil-state-property state :name))
-    ;; add tooltip
-    (when (stringp string)
-      (setq string
-            (propertize string
-                        'help-echo name
-                        'mouse-face 'mode-line-highlight)))
-    (setq evil-mode-line-tag string)
+  (when (listp mode-line-format)
+    (setq evil-mode-line-tag (evil-generate-mode-line-tag state))
     ;; refresh mode line data structure
-    (when (or (null evil-local-mode)
-              (null state)
-              (not (eq evil-mode-line-format 'before)))
-      (setq mode-line-position
-            (delq 'evil-mode-line-tag mode-line-position)))
-    (when (or (null evil-local-mode)
-              (null state)
-              (not (eq evil-mode-line-format 'after)))
-      (while global-mode-string
-        (setq next (pop global-mode-string))
-        (if (eq next 'evil-mode-line-tag)
-            (pop temp) ; remove the ""
-          (push next temp)))
-      (setq global-mode-string (nreverse temp)))
-    (when evil-local-mode
-      (when (eq evil-mode-line-format 'before)
-        (add-to-list 'mode-line-position 'evil-mode-line-tag t #'eq))
-      (when (eq evil-mode-line-format 'after)
-        (unless (memq 'evil-mode-line-tag global-mode-string)
-          (setq global-mode-string
-                (nconc global-mode-string '("" evil-mode-line-tag))))))
-    (force-mode-line-update)))
+    ;; first remove evil from mode-line
+    (setq mode-line-format (delq 'evil-mode-line-tag mode-line-format))
+    (let ((mlpos mode-line-format)
+          pred which where)
+      ;; determine before/after which symbol the tag should be placed
+      (cond
+       ((eq evil-mode-line-format 'before)
+        (setq where 'after which 'mode-line-position))
+       ((eq evil-mode-line-format 'after)
+        (setq where 'after which 'mode-line-modes))
+       ((consp evil-mode-line-format)
+        (setq where (car evil-mode-line-format)
+              which (cdr evil-mode-line-format))))
+      ;; find the cons-cell of the symbol before/after which the tag
+      ;; should be placed
+      (while (and mlpos
+                  (let ((sym (or (car-safe (car mlpos)) (car mlpos))))
+                    (not (eq which sym))))
+        (setq pred mlpos
+              mlpos (cdr mlpos)))
+      ;; put evil tag at the right position in the mode line
+      (cond
+       ((not mlpos)) ;; position not found, so do not add the tag
+       ((eq where 'before)
+        (if pred
+            (setcdr pred (cons 'evil-mode-line-tag mlpos))
+          (setq mode-line-format
+                (cons 'evil-mode-line-tag mode-line-format))))
+       ((eq where 'after)
+        (setcdr mlpos (cons 'evil-mode-line-tag (cdr mlpos)))))
+      (force-mode-line-update))))
 
 ;; input methods should be disabled in non-insertion states
 (defun evil-activate-input-method ()
-  "Disable input method in states with :input-method nil."
+  "Enable input method in states with :input-method non-nil."
   (let (input-method-activate-hook
-        input-method-inactivate-hook)
+        input-method-deactivate-hook)
     (when (and evil-local-mode evil-state)
       (setq evil-input-method current-input-method)
       (unless (evil-state-property evil-state :input-method)
-        (inactivate-input-method)))))
+        (deactivate-input-method)))))
 (put 'evil-activate-input-method 'permanent-local-hook t)
 
-(defun evil-inactivate-input-method ()
-  "Disable input method in states with :input-method nil."
+(defun evil-deactivate-input-method ()
+  "Disable input method in all states."
   (let (input-method-activate-hook
-        input-method-inactivate-hook)
+        input-method-deactivate-hook)
     (when (and evil-local-mode evil-state)
       (setq evil-input-method nil))))
-(put 'evil-inactivate-input-method 'permanent-local-hook t)
+(put 'evil-deactivate-input-method 'permanent-local-hook t)
 
-(defadvice toggle-input-method (around evil activate)
+(defmacro evil-without-input-method-hooks (&rest body)
+  "Execute body with evil's activate/deactivate-input-method hooks deactivated.
+
+This allows input methods to be used in normal-state."
+  `(unwind-protect
+       (progn
+         (remove-hook 'input-method-activate-hook 'evil-activate-input-method t)
+         (remove-hook 'input-method-deactivate-hook
+                      'evil-deactivate-input-method t)
+         ,@body)
+     (progn
+       (add-hook 'input-method-activate-hook 'evil-activate-input-method nil t)
+       (add-hook 'input-method-deactivate-hook
+                 'evil-deactivate-input-method nil t))))
+
+(defadvice toggle-input-method (around evil)
   "Refresh `evil-input-method'."
   (cond
    ((not evil-local-mode)
@@ -513,27 +554,83 @@ may be specified before the body code:
              ,@body))
        ',keymap)))
 
-;; Intercept the ESC event when running in the terminal. This allows
-;; keys that use "ESC" as a prefix key, such as "M-x". If "ESC" is
-;; immediately followed by another key, or another key is pressed
-;; within `evil-esc-delay', the prefixed key sequence is sent.
-;; Otherwise only [escape] is sent.
-(evil-define-keymap evil-esc-map
-  "Keymap for intercepting ESC."
-  :intercept t)
+;; The ESC -> escape translation code has been provided by Stefan
+;; Monnier in the discussion of GNU Emacs bug #13793.
+(defun evil-esc-mode (&optional arg)
+  "Toggle interception of \\e (escape).
+Enable with positive ARG and disable with negative ARG.
 
-(defun evil-turn-on-esc-mode ()
-  "Enable interception of ESC."
-  (unless (eq this-command #'evil-esc)
-    (evil-esc-mode 1)
-    (remove-hook 'pre-command-hook #'evil-turn-on-esc-mode t)))
-(put 'evil-turn-on-esc-mode 'permanent-local-hook t)
+When enabled, `evil-esc-mode' modifies the entry of \\e in
+`input-decode-map'. If such an event arrives, it is translated to
+a plain 'escape event if no further event occurs within
+`evil-esc-delay' seconds. Otherwise no translation happens and
+the ESC prefix map (i.e. the map originally bound to \\e in
+`input-decode-map`) is returned."
+  (cond
+   ((or (null arg) (eq arg 0))
+    (evil-esc-mode (if evil-esc-mode -1 +1)))
+   ((> arg 0)
+    (unless evil-esc-mode
+      (setq evil-esc-mode t)
+      (add-hook 'after-make-frame-functions #'evil-init-esc)
+      (mapc #'evil-init-esc (frame-list))))
+   ((< arg 0)
+    (when evil-esc-mode
+      (remove-hook 'after-make-frame-functions #'evil-init-esc)
+      (mapc #'evil-deinit-esc (frame-list))
+      (setq evil-esc-mode nil)))))
 
-;; `evil-esc' is bound to (kbd "ESC"), while other commands
-;; are bound to [escape]. That way `evil-esc' is used only when
-;; (kbd "ESC") and [escape] are the same event -- i.e., when
-;; running Emacs in the terminal.
-(define-key evil-esc-map (kbd "ESC") 'evil-esc)
+(defun evil-init-esc (frame)
+  "Update `input-decode-map' in terminal."
+  (with-selected-frame frame
+    (let ((term (frame-terminal frame)))
+      (when (and
+             (or (eq evil-intercept-esc 'always)
+                 (and evil-intercept-esc
+                      (eq (terminal-live-p term) t))) ; only patch tty
+             (not (terminal-parameter term 'evil-esc-map)))
+        (let ((evil-esc-map (lookup-key input-decode-map [?\e])))
+          (set-terminal-parameter term 'evil-esc-map evil-esc-map)
+          (define-key input-decode-map [?\e]
+            `(menu-item "" ,evil-esc-map :filter ,#'evil-esc)))))))
+
+(defun evil-deinit-esc (frame)
+  "Restore `input-decode-map' in terminal."
+  (with-selected-frame frame
+    (let ((term (frame-terminal frame)))
+      (when (terminal-live-p term)
+        (let ((evil-esc-map (terminal-parameter term 'evil-esc-map)))
+          (when evil-esc-map
+            (define-key input-decode-map [?\e] evil-esc-map)
+            (set-terminal-parameter term 'evil-esc-map nil)))))))
+
+(defun evil-esc (map)
+  "Translate \\e to 'escape if no further event arrives.
+This function is used to translate a \\e event either to 'escape
+or to the standard ESC prefix translation map. If \\e arrives,
+this function waits for `evil-esc-delay' seconds for another
+event. If no other event arrives, the event is translated to
+'escape, otherwise it is translated to the standard ESC prefix
+map stored in `input-decode-map'. If `evil-inhibit-esc' is
+non-nil or if evil is in emacs state, the event is always
+translated to the ESC prefix.
+
+The translation to 'escape happens only if the current command
+has indeed been triggered by \\e. In other words, this will only
+happen when the keymap is accessed from `read-key-sequence'. In
+particular, if it is access from `define-key' the returned
+mapping will always be the ESC prefix map."
+  (if (and (not evil-inhibit-esc)
+           (or evil-local-mode (evil-ex-p))
+           (not (evil-emacs-state-p))
+           (equal (this-single-command-keys) [?\e])
+           (sit-for evil-esc-delay))
+      (prog1 [escape]
+        (when defining-kbd-macro
+          (end-kbd-macro)
+          (setq last-kbd-macro (vconcat last-kbd-macro [escape]))
+          (start-kbd-macro t t)))
+    map))
 
 (defun evil-state-p (sym)
   "Whether SYM is the name of a state."
@@ -695,7 +792,6 @@ See also `evil-mode-for-keymap'."
       (when (setq map (evil-intercept-keymap-p map state))
         (push (cons (evil-mode-for-keymap map t) map) result)))
     (setq result (nreverse result))
-    (add-to-list 'result `(evil-esc-mode . ,evil-esc-map))
     result))
 
 (defun evil-set-auxiliary-keymap (map state &optional aux)
@@ -910,7 +1006,6 @@ the local keymap will be `evil-test-state-local-map', and so on.
          (exit-hook (intern (format "%s-exit-hook" toggle)))
          (modes (intern (format "%s-modes" toggle)))
          (predicate (intern (format "%s-p" toggle)))
-         (intercept-esc t)
          arg cursor-value enable entry-hook-value exit-hook-value
          input-method key message-value suppress-keymap tag-value)
     ;; collect keywords
@@ -936,8 +1031,6 @@ the local keymap will be `evil-test-state-local-map', and so on.
         (setq enable arg))
        ((eq key :input-method)
         (setq input-method arg))
-       ((eq key :intercept-esc)
-        (setq intercept-esc arg))
        ((eq key :suppress-keymap)
         (setq suppress-keymap arg))))
 
@@ -1011,28 +1104,23 @@ If ARG is nil, don't display a message in the echo area.%s" name doc)
            (let ((evil-state ',state))
              (run-hooks ',exit-hook)
              (setq evil-state nil)
-             (evil-esc-mode -1)
              (evil-normalize-keymaps)
              ,@body))
           (t
            (unless evil-local-mode
-             (evil-local-mode 1)
-             (evil-initialize-state))
+             (evil-local-mode 1))
            (let ((evil-next-state ',state)
                  input-method-activate-hook
-                 input-method-inactivate-hook)
+                 input-method-deactivate-hook)
              (evil-change-state nil)
              (setq evil-state ',state)
              (evil-add-to-alist 'evil-previous-state-alist
                                 ',state evil-previous-state)
              (let ((evil-state ',state))
                (evil-normalize-keymaps)
-               (if ,intercept-esc
-                   (evil-esc-mode 1)
-                 (evil-esc-mode -1))
                (if ',input-method
                    (activate-input-method evil-input-method)
-                 (inactivate-input-method))
+                 (deactivate-input-method))
                (unless evil-no-display
                  (evil-refresh-cursor ',state)
                  (evil-refresh-mode-line ',state)

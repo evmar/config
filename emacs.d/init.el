@@ -93,7 +93,9 @@
 (add-to-list 'load-path "~/.emacs.d/evil")
 (require 'evil)
 (evil-mode 1)
-(add-to-list 'evil-emacs-state-modes 'grep-mode 'erc-mode)
+(add-to-list 'evil-emacs-state-modes 'grep-mode)
+(add-to-list 'evil-emacs-state-modes 'erc-mode)
+(add-to-list 'evil-emacs-state-modes 'comint-mode)
 
 (require 'devhelp)
 

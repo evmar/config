@@ -118,6 +118,7 @@
   (evil-mode 1)
   (add-to-list 'evil-emacs-state-modes 'grep-mode)
   (add-to-list 'evil-emacs-state-modes 'erc-mode)
+  (add-to-list 'evil-emacs-state-modes 'comint-mode)
 #+END_SRC
 ** ido
 #+BEGIN_SRC emacs-lisp

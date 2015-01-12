@@ -171,7 +171,7 @@
 #+BEGIN_SRC emacs-lisp
   (require 'popwin)
   (popwin-mode 1)
-  (global-set-key (kbd "C-p") popwin:keymap)
+  ;;(global-set-key (kbd "C-p") popwin:keymap)
 #+END_SRC
 ** shell mode
 #+BEGIN_SRC emacs-lisp

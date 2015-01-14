@@ -115,6 +115,8 @@
   (add-to-list 'load-path "~/.emacs.d/evil")
   (require 'evil)
   (evil-mode 1)
+  (define-key evil-insert-state-map "\C-r" 'isearch-backward)
+  (define-key evil-normal-state-map "\C-r" 'isearch-backward)
   (add-to-list 'evil-emacs-state-modes 'grep-mode)
   (add-to-list 'evil-emacs-state-modes 'erc-mode)
   (add-to-list 'evil-emacs-state-modes 'comint-mode)

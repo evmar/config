@@ -3,7 +3,7 @@
 
 ;; Copyright 2011-2015 François-Xavier Bois
 
-;; Version: 10.2.00
+;; Version: 10.2.08
 ;; Author: François-Xavier Bois <fxbois AT Google Mail Service>
 ;; Maintainer: François-Xavier Bois
 ;; Created: July 2011
@@ -19,12 +19,9 @@
 
 ;; Code goes here
 
-;;---- TODO --------------------------------------------------------------------
-
-
 ;;---- CONSTS ------------------------------------------------------------------
 
-(defconst web-mode-version "10.2.00"
+(defconst web-mode-version "10.2.08"
   "Web Mode version.")
 
 ;;---- GROUPS ------------------------------------------------------------------
@@ -241,7 +238,7 @@ See web-mode-part-face."
   :type 'list
   :group 'web-mode)
 
-(defcustom web-mode-tests-directory "~/GitHub/web-mode/unit-test/tests"
+(defcustom web-mode-tests-directory "~/Repos/web-mode/unit-test/tests"
   "Directory containing all the unit tests."
   :type 'list
   :group 'web-mode)
@@ -560,7 +557,8 @@ Must be used in conjunction with web-mode-enable-block-face."
   :group 'web-mode-faces)
 
 (defface web-mode-current-column-highlight-face
-  '((t :background "#292929"))
+;;  '((t :background "#292929"))
+  '((t :background "#3e3c36"))
   "Overlay face for current column."
   :group 'web-mode-faces)
 
@@ -3056,6 +3054,9 @@ the environment as needed for ac-sources, right before they're used.")
 
       (remove-list-of-text-properties reg-beg reg-end '(block-token))
 
+      ;; TODO : vérifier la cohérence
+      (put-text-property reg-beg reg-end 'block-side t)
+
       (goto-char reg-beg)
 
       (when (> reg-beg reg-end)
@@ -4039,6 +4040,21 @@ the environment as needed for ac-sources, right before they're used.")
             (put-text-property beg end 'part-element t)
             (web-mode-scan-elements beg end)
             (web-mode-scan-expr-literal beg end)
+
+            (goto-char beg)
+            (let (token-beg token-end)
+              (while (web-mode-part-sf "/*" end t)
+                (goto-char (match-beginning 0))
+                (setq token-beg (point))
+                (if (not (web-mode-part-sf "*/" end t))
+                    (goto-char end)
+                  (setq token-end (point))
+                  (put-text-property token-beg token-end 'part-token 'comment)
+                  ) ;if
+                ) ;while
+              ) ;let
+            (goto-char end)
+
             ) ;when
           )
 
@@ -4050,10 +4066,20 @@ the environment as needed for ac-sources, right before they're used.")
           )
 
          ((eq ?\* ch-next)
-          (unless (eq ?\\ ch-before)
+          (cond
+           ((and (member content-type '("javascript" "jsx"))
+                 (looking-back "[(=][ ]*..")
+                 (looking-at-p "[^*]*/[gimy]*"))
+            (setq token-type 'string)
+            (re-search-forward "/[gimy]*" reg-end t)
+            ;;(skip-chars-forward "/gimy")
+            )
+           ((unless (eq ?\\ ch-before)
             (setq token-type 'comment)
             (search-forward "*/" reg-end t)
             )
+            )
+           )
           )
 
          ((and (member content-type '("javascript" "jsx"))
@@ -4394,6 +4420,7 @@ the environment as needed for ac-sources, right before they're used.")
 ;; web-mode-block-tokenize travaille en effet sur les fins de lignes pour
 ;; les commentaires de type //
 (defun web-mode-invalidate-block-region (pos-beg pos-end)
+  ;;  (message "pos-beg(%S) pos-end(%S)" pos-beg pos-end)
   (save-excursion
     (let (beg end code-beg code-end)
       ;;(message "invalidate-block-region: pos-beg(%S)=%S" pos-beg (get-text-property pos 'block-side))
@@ -4418,7 +4445,7 @@ the environment as needed for ac-sources, right before they're used.")
           (setq end code-end))
         ;; ?? pas de (web-mode-block-tokenize beg end) ?
         (cons beg end)
-        )
+        ) ; asp
        (t
         (goto-char pos-beg)
         (if (web-mode-block-rsb "[;{}(][ ]*\n" code-beg)
@@ -4429,6 +4456,7 @@ the environment as needed for ac-sources, right before they're used.")
             (setq end (1- (match-end 0)))
           (setq end code-end))
         (web-mode-block-tokenize beg end)
+        ;;(message "beg(%S) end(%S)" beg end)
         (cons beg end)
         )
        ) ;cond
@@ -4574,7 +4602,7 @@ the environment as needed for ac-sources, right before they're used.")
   )
 
 (defun web-mode-highlight-region (&optional beg end content-type)
-;;  (message "highlight-region: beg(%S) end(%S) ct(%S)" beg end content-type)
+  ;;  (message "highlight-region: beg(%S) end(%S) ct(%S)" beg end content-type)
   (web-mode-with-silent-modifications
    (save-excursion
      (save-restriction
@@ -5233,32 +5261,44 @@ the environment as needed for ac-sources, right before they're used.")
                    'web-mode-current-column-highlight-face))
 
 (defun web-mode-column-show (column line-from line-to)
-  (let (current index overlay)
+  (let ((index 0) overlay diff)
     (when (> line-from line-to)
       (let (tmp)
         (setq tmp line-from)
         (setq line-from line-to)
-        (setq line-to tmp)
-        ))
-    (setq current line-from
-          index 0)
-;;    (message "column(%S) from(%S) to(%S)" column line-from line-to)
-    (web-mode-with-silent-modifications
-      (save-excursion
-        (goto-char (point-min))
-        (when (> line-from 1)
-          (forward-line (1- line-from)))
-        (while (<= current line-to)
-          (move-to-column (1+ column) t)
-          (backward-char)
-          (setq overlay (web-mode-column-overlay-factory index))
-          (move-overlay overlay (point) (1+ (point)))
-          (setq current (1+ current))
-          (forward-line)
-          (setq index (1+ index))
+        (setq line-to tmp)))
+    (save-excursion
+      (goto-char (point-min))
+      (when (> line-from 1)
+        (forward-line (1- line-from)))
+      (while (<= line-from line-to)
+        (setq overlay (web-mode-column-overlay-factory index))
+        (setq diff (- (line-end-position) (point)))
+        (cond
+         ((or (and (= column 0) (= diff 0))
+              (> column diff))
+          (end-of-line)
+          (move-overlay overlay (point) (point))
+          (overlay-put overlay
+                       'after-string
+                       (concat
+                        (if (> column diff) (make-string (- column diff) ?\s) "")
+                        (propertize 'font-lock-face
+                                    'web-mode-current-column-highlight-face)
+                        ) ;concat
+                       )
           )
-        ) ;save-excursion
-      ) ;silent
+         (t
+          (move-to-column column)
+          (overlay-put overlay 'after-string nil)
+          (move-overlay overlay (point) (1+ (point)))
+          )
+         ) ;cond
+        (setq line-from (1+ line-from))
+        (forward-line)
+        (setq index (1+ index))
+        )
+      ) ;save-excursion
     ))
 
 (defun web-mode-highlight-current-element ()
@@ -6004,6 +6044,12 @@ the environment as needed for ac-sources, right before they're used.")
                (get-text-property pos 'tag-type)
                (not (get-text-property pos 'tag-beg)))
           (cond
+           ((and (get-text-property pos 'tag-attr)
+                 (get-text-property (1- pos) 'tag-attr)
+                 (web-mode-attribute-beginning)
+                 (web-mode-dom-rsf "=[ ]*[\"']?" pos))
+            (setq offset (current-column))
+            )
            ((not (web-mode-tag-beginning))
             )
            (web-mode-attr-indent-offset
@@ -8307,7 +8353,8 @@ Pos should be in a tag."
       )
 
      ((and (>= (point) 3)
-           (member this-command '(self-insert-command)))
+           (member this-command '(self-insert-command))
+           (not (member (get-text-property (point) 'part-token) '(comment string))))
       (setq ctx (web-mode-complete)))
 
      ((and web-mode-enable-auto-opening
@@ -8377,7 +8424,6 @@ Pos should be in a tag."
           ) ;let
         ) ;save-excursion
       )
-
     ;;    (message "post-command (%S) (%S)" web-mode-change-end web-mode-change-end)
     ))
 
@@ -8416,9 +8462,8 @@ Pos should be in a tag."
         ) ;while
       )))
 
-;; ½ &frac12; &#189; &#x00BD;
 (defun web-mode-dom-entities-replace ()
-  "Replace html entities e.g. entities &eacute; &#233; &#x00E9; become é"
+  "Replace html entities e.g. &eacute; &#233; or &#x00E9; become é"
   (interactive)
   (save-excursion
     (let (ms pair elt (min (point-min)) (max (point-max)))

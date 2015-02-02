@@ -357,22 +357,45 @@
 (defun trim (s)
   (replace-regexp-in-string "\n*$" "" s))
 
-; Command+key to run the line under the cursor as a shell command.
-(defun shell-line ()
-  "execute region as shell command"
-  (interactive)
-  (let* ((buf "*shell command*")
-         (bds (bounds-of-thing-at-point 'line))
-         (line (trim (buffer-substring-no-properties (car bds) (cdr bds)))))
-    (if (get-buffer buf) (kill-buffer buf))
-    (shell-command line buf)))
-(global-set-key (kbd "M-@") 'shell-line)
-
 (defun create-scratch-buffer nil
   "create a scratch buffer"
   (interactive)
   (switch-to-buffer (get-buffer-create "*scratch*"))
   (lisp-interaction-mode))
+#+END_SRC
+** run command line in notes
+#+BEGIN_SRC emacs-lisp
+  (require 'thingatpt)
+  (defun bounds-of-commandline-at-point ()
+    (let ((start
+           (save-excursion
+             (beginning-of-line)
+             (point)))
+          (end
+           (save-excursion
+             (end-of-line)
+             (while (equal (preceding-char) ?\\)
+               (forward-line)
+               (end-of-line))
+             (point))))
+      (cons start end)))
+  
+  (put 'commandline 'bounds-of-thing-at-point
+       'bounds-of-commandline-at-point)
+  
+  (defun shell-command-at-point ()
+    (interactive)
+    (let* ((buffer-name "*subcommand*")
+           (cmdline (thing-at-point 'commandline))
+           (full-command (concat "echo " cmdline " && " cmdline " &")))
+      (if (get-buffer buffer-name)
+          (kill-buffer buffer-name))
+      ;; (start-process-shell-command "subcommand" buffer-name
+      ;;                              (concat "echo " cmdline " && " cmdline))
+      ;; (switch-to-buffer buffer-name))
+      (shell-command full-command buffer-name)))
+  
+  (global-set-key (kbd "M-@") 'shell-command-at-point)
 #+END_SRC
 * custom modeline
 #+BEGIN_SRC emacs-lisp

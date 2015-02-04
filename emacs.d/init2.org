@@ -117,9 +117,10 @@
   (evil-mode 1)
   (define-key evil-insert-state-map "\C-r" 'isearch-backward)
   (define-key evil-normal-state-map "\C-r" 'isearch-backward)
-  (add-to-list 'evil-emacs-state-modes 'grep-mode)
-  (add-to-list 'evil-emacs-state-modes 'erc-mode)
   (add-to-list 'evil-emacs-state-modes 'comint-mode)
+  (add-to-list 'evil-emacs-state-modes 'erc-mode)
+  (add-to-list 'evil-emacs-state-modes 'grep-mode)
+  (add-to-list 'evil-emacs-state-modes 'shell-mode)
 #+END_SRC
 ** ido, interactive buffer switch and file load
 #+BEGIN_SRC emacs-lisp

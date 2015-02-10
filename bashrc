@@ -71,7 +71,7 @@ export LESS='FRiKX'
 export BROWSER=google-chrome
 
 source ~/.emacs.d/emacs.bash
-alias e="emacsclient -a '' -c -n"
+alias e='emacsclient -a "" -c -n'
 
 imgur(){
 for i in "$@";do

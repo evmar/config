@@ -221,24 +221,27 @@
 
 ** lisp/scheme
 #+BEGIN_SRC emacs-lisp
-  (require 'paredit)
-  
-  (defface paren-face
-    '((((class color))
-       (:foreground "dark gray")))
-    "Face for parens in lisp"
-    :group 'faces)
-  
-  (defun lisp-settings ()
-    (font-lock-add-keywords nil
-                            '(("(\\|)" . 'paren-face)))
-    (put 'match 'scheme-indent-function 1)
-    (put 'match-let 'scheme-indent-function 0))
-  
-  (add-hook 'scheme-mode-hook 'lisp-settings)
-  (add-hook 'emacs-lisp-mode-hook 'lisp-settings)
-  (add-hook 'lpaca-mode-hook 'lisp-settings)
-  
+    (require 'paredit)
+    
+    (defface paren-face
+      '((((class color))
+         (:foreground "dark gray")))
+      "Face for parens in lisp"
+      :group 'faces)
+    
+    (defun lisp-settings ()
+      (font-lock-add-keywords nil
+                              '(("(\\|)" . 'paren-face)))
+      (put 'match 'scheme-indent-function 1)
+      (put 'match-let 'scheme-indent-function 0))
+    
+    (add-hook 'scheme-mode-hook 'lisp-settings)
+    (add-hook 'emacs-lisp-mode-hook 'lisp-settings)
+    (add-hook 'lpaca-mode-hook 'lisp-settings)
+    
+    (defun pjs-settings ()
+      (put 'function 'scheme-indent-function 2))
+    
 #+END_SRC
 ** Markdown
 #+BEGIN_SRC emacs-lisp

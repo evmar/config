@@ -4,7 +4,7 @@
 # but filters out console spam.
 
 EXTRA_FLAGS=--disable-hang-monitor
-unset AUTO_PROXY
+export AUTO_PROXY=$_AUTO_PROXY
 
-exec /usr/bin/google-chrome $EXTRA_FLAGS "$@" &>> ~/.config/google-chrome/log
+exec /usr/bin/google-chrome $EXTRA_FLAGS "$@" >& /dev/null
 

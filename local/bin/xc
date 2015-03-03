@@ -1,0 +1,42 @@
+#!/usr/bin/python
+
+import argparse
+import gtk
+import glib
+import sys
+
+clipboard = gtk.clipboard_get()
+
+def serve_image(path):
+    try:
+        pixbuf = gtk.gdk.pixbuf_new_from_file(path)
+    except glib.GError:
+        return False
+    clipboard.set_image(pixbuf)
+    return True
+
+def serve_text(path):
+    try:
+        with open(path) as f:
+            data = f.read()
+    except IOError:
+        return False 
+    clipboard.set_text(data)
+    return True
+
+def main():
+    parser = argparse.ArgumentParser(description='put a file on the clipboard')
+    parser.add_argument('path', help='path to read')
+    args = parser.parse_args()
+    path = args.path
+    if not serve_image(path) and not serve_text(path):
+        print 'error: unable to read %s as image or text' % path
+        return 1
+    print 'ready to paste; ctl-c to quit'
+    try:
+        gtk.main()
+    except KeyboardInterrupt:
+        pass
+    return 0
+
+sys.exit(main())

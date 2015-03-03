@@ -215,7 +215,7 @@
 ** Javascript
 #+BEGIN_SRC emacs-lisp
   (require 'js)
-  (add-to-list 'auto-mode-alist '("\\.js$" . js-mode))
+  (add-to-list 'auto-mode-alist '("\\.jsx?$" . js-mode))
   (add-to-list 'auto-mode-alist '("\\.json$" . js-mode))
 #+END_SRC
 
@@ -300,7 +300,7 @@
   (require 'web-mode)
   (setq web-mode-script-padding 0)
   (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.s?css\\'" . web-mode))
 #+END_SRC
 
 * custom functions

@@ -72,6 +72,9 @@ export BROWSER=google-chrome
 
 source ~/.emacs.d/emacs.bash
 alias e='emacsclient -a "" -c -n'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
 
 imgur(){
 for i in "$@";do

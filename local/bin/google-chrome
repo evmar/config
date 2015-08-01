@@ -1,10 +1,11 @@
 #!/bin/bash
 #
-# This script runs google-chrome with the same arguments,
+# This script runs google-chrome/chromium with the same arguments,
 # but filters out console spam.
 
+CHROME=$(basename $0)
 EXTRA_FLAGS=--disable-hang-monitor
 export AUTO_PROXY=$_AUTO_PROXY
 
-exec /usr/bin/google-chrome $EXTRA_FLAGS "$@" >& /dev/null
+exec /usr/bin/$CHROME $EXTRA_FLAGS "$@" >& /dev/null
 

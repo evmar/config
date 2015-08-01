@@ -26,7 +26,7 @@ link_subdir() {
     for dir in $(find $target -type d); do
         mkdir -p ~/.$dir
     done
-    for file in $(find $target -type f); do
+    for file in $(find $target -type f -o -type l); do
         link $file
     done
 }

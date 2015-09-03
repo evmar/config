@@ -12,55 +12,57 @@
    backup-inhibited t
    ; disable auto save
    auto-save-default nil
-  
+
    make-backup-files nil
-  
+
    ; don't do all this renaming/copying jiggery-pokery when saving a file.
    file-precious-flag nil
    ; don't break hard links when editing
    backup-by-copying-when-linked nil
-  
+
    indent-tabs-mode nil
    standard-indent 2
    c-basic-offset 2
    css-indent-offset 2
    css-indent-offset 2
-  
+
+   visible-bell 1
+
    require-final-newline t
-  
+
    ; middle-click should paste at the point, not where I clicked.
    mouse-yank-at-point t
-  
+
    ; death to fsync (really to ext3 with mode=ordered)
    write-region-inhibit-fsync t
-  
+
    ; use normal monospace font
    font-use-system-font t
   )
-  
+
   ; no menu bar on console mode
   (menu-bar-mode -1)
-  
+
   ; reduce big gray margins on window
   (fringe-mode '(1 . 0))
-  
+
   ; auto-revert to on-disk file versions
   (global-auto-revert-mode 1)
-  
+
   ; disable scroll bars
   (scroll-bar-mode -1)
-  
+
   ; Don't require me to type out "yes".
   (fset 'yes-or-no-p 'y-or-n-p)
-  
+
   ; Better font on Windows.
   (if (eq system-type 'windows-nt)
       (set-face-attribute 'default nil :font "Consolas-11"))
-  
+
   ; It's ok to run M-x erase-buffer.
   (put 'erase-buffer 'disabled nil)
-  
-  
+
+
 #+END_SRC
   
 * global settings

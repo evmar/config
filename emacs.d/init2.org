@@ -163,12 +163,6 @@
   (global-whitespace-mode 1)
 #+END_SRC
 
-** snippets
-#+BEGIN_SRC emacs-lisp
-  (require 'yasnippet)
-  (yas-global-mode 1)
-  (add-hook 'go-mode-hook '(lambda () (yas-minor-mode)))
-#+END_SRC
 ** popwin hides popup windows like compilation/help automatically))))))
 #+BEGIN_SRC emacs-lisp
   (require 'popwin)

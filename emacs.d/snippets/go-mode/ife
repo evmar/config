@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# name: ife
-# key: ife
-# --
-if ${1:err != nil} {
-   ${2:return err}
-}
-$0

@@ -35,9 +35,6 @@
 
    ; death to fsync (really to ext3 with mode=ordered)
    write-region-inhibit-fsync t
-
-   ; use normal monospace font
-   font-use-system-font t
   )
 
   ; no menu bar on console mode
@@ -102,6 +99,11 @@
     
 #+END_SRC
 
+** font
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'default-frame-alist '(font . "Monospace 12"))
+
+#+END_SRC
 ** browser support
 #+BEGIN_SRC emacs-lisp
   (setq browse-url-browser-function 'browse-url-generic

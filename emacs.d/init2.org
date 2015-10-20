@@ -429,15 +429,16 @@
   
   (defun shell-command-at-point ()
     (interactive)
-    (let* ((buffer-name "*subcommand*")
-           (cmdline (thing-at-point 'commandline))
-           (full-command (concat "echo " cmdline " && " cmdline " &")))
+    (let ((buffer-name "*subcommand*")
+          (cmdline (thing-at-point 'commandline)))
       (if (get-buffer buffer-name)
           (kill-buffer buffer-name))
-      ;; (start-process-shell-command "subcommand" buffer-name
-      ;;                              (concat "echo " cmdline " && " cmdline))
-      ;; (switch-to-buffer buffer-name))
-      (shell-command full-command buffer-name)))
+      (with-current-buffer (get-buffer-create buffer-name)
+        (insert "running command:\n" cmdline "\n\n"))
+  
+      (async-shell-command cmdline buffer-name)
+      ;(switch-to-buffer buffer-name)
+      ))
   
   (global-set-key (kbd "M-@") 'shell-command-at-point)
 #+END_SRC

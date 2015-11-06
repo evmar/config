@@ -35,6 +35,11 @@
 
    ; death to fsync (really to ext3 with mode=ordered)
    write-region-inhibit-fsync t
+  
+   ; use normal monospace font
+   font-use-system-font t
+
+   max-specpdl-size 2000
   )
 
   ; no menu bar on console mode
@@ -178,6 +183,12 @@
   (setq comint-scroll-to-bottom-on-input t)
   (setq comint-prompt-read-only t)
 #+END_SRC
+** company
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'load-path "~/.emacs.d/company-0.8.12")
+  (require 'company)
+#+END_SRC
+
 * programming languages
 ** C/C++/ObjC
 #+BEGIN_SRC emacs-lisp
@@ -193,6 +204,17 @@
                             (set-variable 'tab-width 4 t)))
   (setq gofmt-command "goimports")
   (add-hook 'before-save-hook 'gofmt-before-save)
+  
+  (require 'company-go)
+  (add-hook 'go-mode-hook 'company-mode)
+  (add-hook 'go-mode-hook (lambda ()
+    (set (make-local-variable 'company-backends) '(company-go))
+    (company-mode)))
+
+  (require 'go-eldoc)
+  (add-hook 'go-mode-hook 'go-eldoc-setup)
+
+  (require 'go-rename)
 #+END_SRC
 
 ** CoffeeScript

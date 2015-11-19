@@ -152,18 +152,9 @@
   
 ** compilation
 #+BEGIN_SRC emacs-lisp
-  ;; this means hitting the compile button always saves the buffer
-  ;; having to separately hit C-x C-s is a waste of time
   (setq mode-compile-always-save-buffer-p t)
   (setq compilation-scroll-output 'first-error)
-  ;; If the compilation has a zero exit code, the window disappears
-  ;; after two seconds.
-  ;; (setq compilation-finish-functions
-  ;;       (lambda (buf str)
-  ;;         (unless (string-match "exited abnormally" str)
-  ;;           (delete-windows-on buf)
-  ;;           (message "compile succeeded"))))
-  
+
   (global-set-key [f7] (lambda ()
                          (interactive)
                          (save-excursion (switch-to-buffer "*compilation*")

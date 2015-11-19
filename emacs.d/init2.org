@@ -117,7 +117,17 @@
   ;(setq browse-url-browser-function 'w3m-browse-url)
   
 #+END_SRC
+** melpa
+#+BEGIN_SRC emacs-lisp
+  (require 'package)
+  (add-to-list 'package-archives
+               '("melpa" . "https://melpa.org/packages/"))
+  (when (< emacs-major-version 24)
+    ;; For important compatibility libraries like cl-lib
+    (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
+  (package-initialize)
 
+#+END_SRC
 * global modes
 ** evil
 #+BEGIN_SRC emacs-lisp

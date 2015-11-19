@@ -330,6 +330,22 @@
   (add-to-list 'auto-mode-alist '("\\.s?css\\'" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.[jt]sx?\\'" . web-mode))
 #+END_SRC
+*** Web/TypeScript
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'web-mode-hook
+            (lambda ()
+              (when (string-match-p "\\.ts\\'" (buffer-file-name))
+                (tide-setup)
+                (flycheck-mode t)
+                (eldoc-mode t))))
+
+  (add-hook 'typescript-mode-hook
+            (lambda ()
+              (tide-setup)
+              (flycheck-mode t)
+              (setq flycheck-check-syntax-automatically '(save mode-enabled))
+              (eldoc-mode t)))
+#+END_SRC
 
 * custom functions
 ** blog posts

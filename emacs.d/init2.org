@@ -50,7 +50,9 @@
 
   ; auto-revert to on-disk file versions
   (global-auto-revert-mode 1)
-
+  (setq-default
+   auto-revert-interval 1)
+  
   ; disable scroll bars
   (scroll-bar-mode -1)
 
@@ -275,6 +277,15 @@
   (add-to-list 'auto-mode-alist '("\\.text$" . markdown-mode))
   (add-to-list 'auto-mode-alist '("\\.markdown$" . markdown-mode))
   (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
+  
+  (defun markdown-fontify-buffer-wiki-links-empty-hack () 
+    "Empty replacement for `markdown-fontify-buffer-wiki-links` due to hanging bug." 
+    (interactive)) 
+  
+  (eval-after-load "markdown-mode" 
+    '(progn 
+       (fset 'markdown-fontify-buffer-wiki-links 
+             'markdown-fontify-buffer-wiki-links-empty-hack))) 
 #+END_SRC
 
 ** Ninja

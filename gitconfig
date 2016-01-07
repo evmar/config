@@ -3,8 +3,6 @@
   email = martine@danga.com
 [color]
   ui = auto
-[push]
-  default = matching
 [alias]
   b = branch
   d = diff

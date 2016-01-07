@@ -14,3 +14,5 @@
 	denyCurrentBranch = warn
 [github]
 	user = martine
+[push]
+	default = simple

@@ -320,6 +320,16 @@
   (require 'toml-mode)
 #+END_SRC
 
+** TypeScript
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'typescript-mode-hook
+            (lambda ()
+              (tide-setup)
+              (flycheck-mode t)
+              (setq flycheck-check-syntax-automatically '(save mode-enabled))
+              (eldoc-mode t))
+              (company-mode))
+#+END_SRC
 ** Vala
 #+BEGIN_SRC emacs-lisp
   (autoload 'vala-mode "vala-mode" "Major mode for editing Vala code." t)
@@ -341,25 +351,8 @@
   (setq web-mode-script-padding 0)
   (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.s?css\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.[jt]sx?\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . web-mode))
 #+END_SRC
-*** Web/TypeScript
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'web-mode-hook
-            (lambda ()
-              (when (string-match-p "\\.ts\\'" (buffer-file-name))
-                (tide-setup)
-                (flycheck-mode t)
-                (eldoc-mode t))))
-
-  (add-hook 'typescript-mode-hook
-            (lambda ()
-              (tide-setup)
-              (flycheck-mode t)
-              (setq flycheck-check-syntax-automatically '(save mode-enabled))
-              (eldoc-mode t)))
-#+END_SRC
-
 * custom functions
 ** blog posts
 #+BEGIN_SRC emacs-lisp

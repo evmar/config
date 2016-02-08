@@ -383,36 +383,44 @@
 #+END_SRC
 ** random helpers
 #+BEGIN_SRC emacs-lisp
-(defun ami-summarize-indentation-at-point ()
-  "Echo a summary of how one gets from the left-most column to
-  POINT in terms of indentation changes."
-  (interactive)
-  (save-excursion
-    (let ((cur-indent most-positive-fixnum)
-          (trace '()))
-      (while (not (bobp))
-        (let ((current-line (buffer-substring (line-beginning-position)
-                                              (line-end-position))))
-          (when (and (not (string-match "^\\s-*$" current-line))
-                     (< (current-indentation) cur-indent))
-            (setq cur-indent (current-indentation))
-            (setq trace (cons current-line trace))
-            (if (or (string-match "^\\s-*}" current-line)
-                    (string-match "^\\s-*else " current-line)
-                    (string-match "^\\s-*elif " current-line))
-                (setq cur-indent (1+ cur-indent)))))
-        (forward-line -1))
-      (message "%s" (mapconcat 'identity trace "\n")))))
-
-; Trim initial/trailing whitespace from a string.
-(defun trim (s)
-  (replace-regexp-in-string "\n*$" "" s))
-
-(defun create-scratch-buffer nil
-  "create a scratch buffer"
-  (interactive)
-  (switch-to-buffer (get-buffer-create "*scratch*"))
-  (lisp-interaction-mode))
+  (defun ami-summarize-indentation-at-point ()
+    "Echo a summary of how one gets from the left-most column to
+    POINT in terms of indentation changes."
+    (interactive)
+    (save-excursion
+      (let ((cur-indent most-positive-fixnum)
+            (trace '()))
+        (while (not (bobp))
+          (let ((current-line (buffer-substring (line-beginning-position)
+                                                (line-end-position))))
+            (when (and (not (string-match "^\\s-*$" current-line))
+                       (< (current-indentation) cur-indent))
+              (setq cur-indent (current-indentation))
+              (setq trace (cons current-line trace))
+              (if (or (string-match "^\\s-*}" current-line)
+                      (string-match "^\\s-*else " current-line)
+                      (string-match "^\\s-*elif " current-line))
+                  (setq cur-indent (1+ cur-indent)))))
+          (forward-line -1))
+        (message "%s" (mapconcat 'identity trace "\n")))))
+  
+  ; Trim initial/trailing whitespace from a string.
+  (defun trim (s)
+    (replace-regexp-in-string "\n*$" "" s))
+  
+  (defun create-scratch-buffer nil
+    "create a scratch buffer"
+    (interactive)
+    (switch-to-buffer (get-buffer-create "*scratch*"))
+    (lisp-interaction-mode))
+  
+  (defun copy-file-name-to-clipboard ()
+    "Copy the current buffer file name to the clipboard."
+    (interactive)
+    (let ((filename (buffer-file-name)))
+      (when filename
+        (kill-new filename)
+        (message "Copied buffer file name '%s' to the clipboard." filename))))
 #+END_SRC
 ** run command line in notes
 #+BEGIN_SRC emacs-lisp

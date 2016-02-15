@@ -14,6 +14,7 @@
    auto-save-default nil
 
    make-backup-files nil
+   create-lockfiles nil
 
    ; don't do all this renaming/copying jiggery-pokery when saving a file.
    file-precious-flag nil

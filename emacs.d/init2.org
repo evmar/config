@@ -145,6 +145,7 @@
   (add-to-list 'evil-emacs-state-modes 'erc-mode)
   (add-to-list 'evil-emacs-state-modes 'grep-mode)
   (add-to-list 'evil-emacs-state-modes 'shell-mode)
+  (add-to-list 'evil-emacs-state-modes 'tide-references-mode)
 #+END_SRC
 ** ido, interactive buffer switch and file load
 #+BEGIN_SRC emacs-lisp
@@ -164,7 +165,7 @@
                          (interactive)
                          (save-excursion (switch-to-buffer "*compilation*")
                                          (recompile))))
-  (global-set-key (kbd "M-`") 'next-error)
+  (global-set-key (kbd "C-`") 'next-error)
 #+END_SRC
 
 ** whitespace
@@ -189,12 +190,6 @@
   (setq comint-scroll-to-bottom-on-input t)
   (setq comint-prompt-read-only t)
 #+END_SRC
-** company
-#+BEGIN_SRC emacs-lisp
-  (add-to-list 'load-path "~/.emacs.d/company-0.8.12")
-  (require 'company)
-#+END_SRC
-
 * programming languages
 ** C/C++/ObjC
 #+BEGIN_SRC emacs-lisp
@@ -323,13 +318,16 @@
 
 ** TypeScript
 #+BEGIN_SRC emacs-lisp
+  (require 'typescript-mode)
   (add-hook 'typescript-mode-hook
             (lambda ()
               (tide-setup)
               (flycheck-mode t)
               (setq flycheck-check-syntax-automatically '(save mode-enabled))
-              (eldoc-mode t))
-              (company-mode))
+              (eldoc-mode t)
+              (tide-hl-identifier-mode t)
+              (company-mode t)
+              ))
 #+END_SRC
 ** Vala
 #+BEGIN_SRC emacs-lisp

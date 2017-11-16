@@ -32,21 +32,18 @@ set +o histexpand
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
 # set a fancy prompt (non-color, unless we know we "want" color)
+if [ -n "$SSH_CLIENT" ]; then
+  # Only show hostname if ssh'd.
+  PS1='\h:'
+else
+  PS1=''
+fi
 case "$TERM" in
-xterm-color|rxvt-unicode)
-    PS1='\h:\[\033[34m\]\w\[\033[0m\]\$ '
+xterm*)
+    PS1="$PS1\[\033[34m\]\w\[\033[0m\]\$ "
     ;;
 *)
-    PS1='\h:\w\$ '
-    ;;
-esac
-
-# If this is an xterm set the title to user@host:dir
-case "$TERM" in
-xterm*|rxvt*)
-    PS1="\[\e]0;\u@\h: \w\a\]$PS1"
-    ;;
-*)
+    PS1="$PS1\w\$ "
     ;;
 esac
 

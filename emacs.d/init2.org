@@ -3,6 +3,10 @@
   (add-to-list 'load-path "~/.emacs.d")
   (add-to-list 'load-path "~/.local/share/emacs/site-lisp")
 #+END_SRC
+* per-machine settings from local.el, if they exist
+#+BEGIN_SRC emacs-lisp
+  (load "local" t t)
+#+END_SRC
 * basic settings
 #+BEGIN_SRC emacs-lisp
   (setq-default
@@ -503,8 +507,3 @@
   (set-face-attribute 'mode-line-filename-face nil
                       :weight 'bold)
 #+END_SRC
-* per-machine settings from local.el, if they exist
-#+BEGIN_SRC emacs-lisp
-  (load "local" t t)
-#+END_SRC
-

@@ -150,6 +150,7 @@
   (add-to-list 'evil-emacs-state-modes 'grep-mode)
   (add-to-list 'evil-emacs-state-modes 'shell-mode)
   (add-to-list 'evil-emacs-state-modes 'tide-references-mode)
+  (global-undo-tree-mode -1)
 #+END_SRC
 ** ido, interactive buffer switch and file load
 #+BEGIN_SRC emacs-lisp

@@ -1,6 +1,6 @@
 * load elisp from my emacs dir
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'load-path "~/.emacs.d")
+  (add-to-list 'load-path "~/.emacs.d/lisp")
   (add-to-list 'load-path "~/.local/share/emacs/site-lisp")
 #+END_SRC
 * per-machine settings from local.el, if they exist
@@ -212,7 +212,7 @@
                             (set-variable 'tab-width 4 t)))
   (setq gofmt-command "goimports")
   (add-hook 'before-save-hook 'gofmt-before-save)
-  
+
   (require 'company-go)
   (add-hook 'go-mode-hook 'company-mode)
   (add-hook 'go-mode-hook (lambda ()

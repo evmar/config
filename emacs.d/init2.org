@@ -78,7 +78,6 @@
 ** custom variables
 #+BEGIN_SRC emacs-lisp
   (custom-set-variables
-   '(coffee-tab-width 2)
    '(column-number-mode t)
    '(erc-hide-list (quote ("JOIN" "PART" "QUIT")))
    '(erc-nick "evmar")
@@ -212,22 +211,6 @@
                             (set-variable 'tab-width 4 t)))
   (setq gofmt-command "goimports")
   (add-hook 'before-save-hook 'gofmt-before-save)
-
-  (require 'company-go)
-  (add-hook 'go-mode-hook 'company-mode)
-  (add-hook 'go-mode-hook (lambda ()
-    (set (make-local-variable 'company-backends) '(company-go))
-    (company-mode)))
-
-  (require 'go-eldoc)
-  (add-hook 'go-mode-hook 'go-eldoc-setup)
-
-  (require 'go-rename)
-#+END_SRC
-
-** CoffeeScript
-#+BEGIN_SRC emacs-lisp
-  (require 'coffee-mode)
 #+END_SRC
 
 ** Haskell
@@ -241,7 +224,7 @@
   (add-to-list 'auto-mode-alist '("\\.chs$" . haskell-mode))
 #+END_SRC
 
-** Javascript
+** JavaScript
 #+BEGIN_SRC emacs-lisp
   (require 'js)
   (add-to-list 'auto-mode-alist '("\\.jsx?$" . js-mode))
@@ -334,21 +317,6 @@
               (company-mode t)
               ))
 #+END_SRC
-** Vala
-#+BEGIN_SRC emacs-lisp
-  (autoload 'vala-mode "vala-mode" "Major mode for editing Vala code." t)
-  (add-to-list 'auto-mode-alist '("\\.vala$" . vala-mode))
-  (add-to-list 'auto-mode-alist '("\\.vapi$" . vala-mode))
-  (add-to-list 'file-coding-system-alist '("\\.vala$" . utf-8))
-  (add-to-list 'file-coding-system-alist '("\\.vapi$" . utf-8))
-#+END_SRC
-
-** Yaml
-#+BEGIN_SRC emacs-lisp
-  (require 'yaml-mode)
-  (add-to-list 'auto-mode-alist '("\\.ya?ml$" . yaml-mode))
-#+END_SRC
-
 ** Web (HTML/CSS/JS)
 #+BEGIN_SRC emacs-lisp
   (require 'web-mode)

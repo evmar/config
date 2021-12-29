@@ -1,21 +1,3 @@
 Host *
   ControlMaster auto
   ControlPath ~/.ssh/cm/%r@%h:%p
-
-Host kitten
-  HostName kitten.lan
-  User evmar
-
-Host mouse
-  User evmar
-  ForwardAgent yes
-
-Host nfs
-  HostName ssh.phx.nearlyfreespeech.net
-
-Host d
-  User evmar
-  HostName d.neugierig.org
-
-Host openwrt
-  User root

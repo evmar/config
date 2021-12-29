@@ -16,7 +16,7 @@ link() {
         if [ "${link%/}" != $pwd/$file ]; then
             echo "Skipping $target -- remove it if it should be managed by config."
         fi
-        continue
+        return
     fi
     trace ln -s $pwd/$file $target
 }
